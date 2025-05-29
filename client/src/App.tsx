@@ -9,6 +9,12 @@ import ProfilePage from "./dashboard/pages/ProfilePage";
 import NewsPage from "./dashboard/pages/NewsPage";
 import WritersPage from "./dashboard/pages/WritersPage";
 import AddWriterPage from "./dashboard/pages/AddWriterPage";
+import CreateNewsPage from "./dashboard/pages/CreateNewsPage";
+import WriterPage from "./dashboard/pages/WriterPage";
+
+const userInfo = {
+  role: "writer",
+};
 
 function App() {
   return (
@@ -19,7 +25,16 @@ function App() {
 
           <Route path="/dashboard" element={<ProtectDashboard />}>
             <Route path="" element={<MainLayout />}>
-              <Route path="" element={<Navigate to="/dashboard/admin" />} />
+              <Route
+                path=""
+                element={
+                  userInfo.role === "admin" ? (
+                    <Navigate to="/dashboard/admin" />
+                  ) : (
+                    <Navigate to="/dashboard/writer" />
+                  )
+                }
+              />
               <Route path="access-denied" element={<AccessDeniedPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="news" element={<NewsPage />} />
@@ -28,6 +43,11 @@ function App() {
                 <Route path="admin" element={<AdminPage />} />
                 <Route path="writers" element={<WritersPage />} />
                 <Route path="writer/add" element={<AddWriterPage />} />
+              </Route>
+
+              <Route path="" element={<ProtectRole role="writer" />}>
+                <Route path="writer" element={<WriterPage />} />
+                <Route path="news/create" element={<CreateNewsPage />} />
               </Route>
             </Route>
           </Route>
