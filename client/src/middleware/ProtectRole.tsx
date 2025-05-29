@@ -6,7 +6,8 @@ interface ProtectRoleProps {
 function ProtectRole({ role }: ProtectRoleProps) {
   const user = {
     name: "Ali",
-    role: "admin",
+    // role: "admin",
+    role: "writer",
   };
 
   if (user.role === role) return <Outlet />;
