@@ -1,11 +1,28 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+var cors = require("cors");
 const db_connect = require("./utils/db");
+
+// Routes
+const authRoute = require("./routes/authRoute");
 
 dotenv.config();
 
+// middleware
+app.use(bodyParser.json());
+
+const corsOptions =
+  process.env.NODE_ENV === "production"
+    ? cors()
+    : cors({ origin: ["http://localhost:5173", "http://localhost:3000"] });
+
+app.use(corsOptions);
+
 const port = process.env.PORT;
+
+app.use("/", authRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello Easy!");

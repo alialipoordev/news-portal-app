@@ -1,16 +1,14 @@
+import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import storeContext from "../context/storeContext";
 
 interface ProtectRoleProps {
   role: string;
 }
 function ProtectRole({ role }: ProtectRoleProps) {
-  const user = {
-    name: "Ali",
-    // role: "admin",
-    role: "writer",
-  };
+  const { store } = useContext(storeContext);
 
-  if (user.role === role) return <Outlet />;
+  if (store.userInfo?.role === role) return <Outlet />;
   else return <Navigate to="/dashboard/access-denied" />;
 }
 

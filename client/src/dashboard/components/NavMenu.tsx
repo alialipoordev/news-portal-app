@@ -6,6 +6,7 @@ interface NavMenuItem {
   icon: ReactElement;
   label: string;
   id: number;
+  onClick?: () => void;
 }
 
 interface NavMenuProps {
@@ -27,6 +28,7 @@ const NavMenu = ({ items }: NavMenuProps) => {
         <li key={item.id}>
           <Link
             to={item.to}
+            onClick={item.onClick}
             className={`${
               pathname === item.to ? activeClassName : inactiveClassName
             } ${linkClassName}`}
