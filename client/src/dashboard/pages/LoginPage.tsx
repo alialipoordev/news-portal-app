@@ -4,10 +4,7 @@ import BASE_URL from "../../config/config";
 import toast from "react-hot-toast";
 import storeContext from "../../context/storeContext";
 import { useNavigate } from "react-router-dom";
-
-interface Error {
-  response: { data: { message: string } };
-}
+import { ErrorAxios } from "../../types";
 
 const LoginPage = () => {
   const [loader, setLoader] = useState(false);
@@ -28,6 +25,7 @@ const LoginPage = () => {
   async function submitHandler(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
+      setLoader(true);
       const { data } = await axios.post(`${BASE_URL}/api/login`, formData);
       setLoader(false);
       localStorage.setItem("newsToken", data.token);
@@ -36,7 +34,8 @@ const LoginPage = () => {
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
-      toast.error((error as Error).response?.data.message);
+      toast.error((error as ErrorAxios).response?.data.message);
+      setLoader(false);
     }
   }
 

@@ -15,3 +15,16 @@ export type StoreAction =
   | {
       type: "LOGOUT";
     };
+
+export interface ErrorAxios {
+  response: { data: { message: string } };
+}
+
+export interface WriterUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: "writer";
+  category: string;
+  image: string;
+}

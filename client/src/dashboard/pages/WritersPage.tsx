@@ -1,8 +1,31 @@
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import profile from "../../assets/profile.png";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import storeContext from "../../context/storeContext";
+import BASE_URL from "./../../config/config";
+import { WriterUser } from "../../types";
 
 function WritersPage() {
+  const [writers, setWriters] = useState([]);
+  const { store } = useContext(storeContext);
+
+  useEffect(() => {
+    const getWriters = async () => {
+      try {
+        const { data } = await axios.get(`${BASE_URL}/api/news/writers`, {
+          headers: { Authorization: `Bearer ${store.token}` },
+        });
+        setWriters(data.writers);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getWriters();
+  }, []);
+
   return (
     <div className="bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-center px-6 py-4 border-b border-gray-400">
@@ -29,12 +52,12 @@ function WritersPage() {
             </tr>
           </thead>
           <tbody className="text-gray-600">
-            {[1, 2, 3, 4].map((item, index) => (
-              <tr key={index} className="border-t">
-                <td className="py-4 px-6">1</td>
-                <td className="py-4 px-6">Name </td>
-                <td className="py-4 px-6">Category Name</td>
-                <td className="py-4 px-6">Writer</td>
+            {writers.map((item: WriterUser, index) => (
+              <tr key={item._id} className="border-t">
+                <td className="py-4 px-6">{index + 1}</td>
+                <td className="py-4 px-6">{item.name} </td>
+                <td className="py-4 px-6">{item.category}</td>
+                <td className="py-4 px-6">{item.role}</td>
                 <td className="py-4 px-6">
                   <img
                     className="w-10 h-10 rounded-full object-cover"
@@ -43,11 +66,11 @@ function WritersPage() {
                   />
                 </td>
 
-                <td className="py-4 px-6">test@gmail.com</td>
+                <td className="py-4 px-6">{item.email}</td>
                 <td className="py-4 px-6">
                   <div className="flex gap-3 text-gray-500">
                     <Link
-                      to="#"
+                      to={`/dashboard/writer/${item._id}`}
                       className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-800"
                     >
                       <FaEdit />

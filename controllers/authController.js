@@ -44,6 +44,48 @@ class AuthController {
       console.log(error);
     }
   };
+
+  add_writer = async (req, res) => {
+    const { name, password, category, email } = req.body;
+    if (!name?.trim() || !password?.trim() || !category || !email?.trim())
+      return res.status(404).json({ message: "All fields are required" });
+
+    try {
+      const writer = await authModel.findOne({ email });
+      if (writer)
+        return res.status(409).json({ message: "Writer already exists" });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newWriter = await authModel.create({
+        name,
+        password: hashedPassword,
+        category,
+        email,
+        role: "writer",
+      });
+
+      return res.status(201).json({
+        message: "Writer added successfully",
+        writer: newWriter,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  get_writers = async (req, res) => {
+    try {
+      const writers = await authModel
+        .find({ role: "writer" })
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json({ writers });
+    } catch (error) {
+      console.error("Error in get_writers:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
 }
 
 module.exports = new AuthController();

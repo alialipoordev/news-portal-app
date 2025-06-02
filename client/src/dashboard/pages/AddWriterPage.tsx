@@ -1,9 +1,53 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import BASE_URL from "../../config/config";
 import { ImSpinner8 } from "react-icons/im";
+import { ErrorAxios } from "../../types";
+import storeContext from "../../context/storeContext";
 
 function AddWriterPage() {
   const [loader, setLoader] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    email: "",
+    password: "",
+  });
+
+  const { store } = useContext(storeContext);
+  const navigate = useNavigate();
+
+  function inputChangeHandler(
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  async function submitHandler(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      setLoader(true);
+      const { data } = await axios.post(
+        `${BASE_URL}/api/writer/add`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${store.token}` },
+        }
+      );
+      setLoader(false);
+      toast.success(data.message);
+      navigate("/dashboard/writers");
+    } catch (error) {
+      console.log(error);
+      toast.error((error as ErrorAxios).response?.data.message);
+      setLoader(false);
+    }
+  }
 
   return (
     <div className="bg-white rounded-md">
@@ -18,7 +62,7 @@ function AddWriterPage() {
       </div>
 
       <div className="p-4">
-        <form>
+        <form onSubmit={submitHandler}>
           <div className="grid grid-cols-2 gap-x-8 mb-3">
             <div className="flex flex-col gap-y-2">
               <label
@@ -28,6 +72,8 @@ function AddWriterPage() {
                 Name
               </label>
               <input
+                value={formData.name}
+                onChange={inputChangeHandler}
                 required
                 type="text"
                 placeholder="Name"
@@ -45,6 +91,8 @@ function AddWriterPage() {
                 Category
               </label>
               <select
+                value={formData.category}
+                onChange={inputChangeHandler}
                 required
                 name="category"
                 id="category"
@@ -69,6 +117,8 @@ function AddWriterPage() {
                 Email
               </label>
               <input
+                value={formData.email}
+                onChange={inputChangeHandler}
                 required
                 type="email"
                 placeholder="Email"
@@ -86,6 +136,8 @@ function AddWriterPage() {
                 Password
               </label>
               <input
+                value={formData.password}
+                onChange={inputChangeHandler}
                 required
                 type="password"
                 placeholder="Password"
