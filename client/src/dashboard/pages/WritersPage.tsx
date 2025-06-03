@@ -5,26 +5,48 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import storeContext from "../../context/storeContext";
 import BASE_URL from "./../../config/config";
-import { WriterUser } from "../../types";
+import { ErrorAxios, WriterUser } from "../../types";
+import toast from "react-hot-toast";
+import { ImSpinner8 } from "react-icons/im";
 
 function WritersPage() {
   const [writers, setWriters] = useState([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { store } = useContext(storeContext);
 
-  useEffect(() => {
-    const getWriters = async () => {
-      try {
-        const { data } = await axios.get(`${BASE_URL}/api/news/writers`, {
-          headers: { Authorization: `Bearer ${store.token}` },
-        });
-        setWriters(data.writers);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const getWriters = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/news/writers`, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+      setWriters(data.writers);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
     getWriters();
   }, []);
+
+  async function handleDeleteWriter(id: string) {
+    if (!window.confirm("Are your sure to delete writer?")) return;
+    setDeletingId(id);
+
+    try {
+      const { data } = await axios.delete(
+        `${BASE_URL}/api/delete/writer/${id}`,
+        {
+          headers: { Authorization: `Bearer ${store.token}` },
+        }
+      );
+      toast.success(data.message);
+      getWriters();
+    } catch (error) {
+      console.log(error);
+      toast.error((error as ErrorAxios).response?.data.message);
+    }
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md">
@@ -70,17 +92,21 @@ function WritersPage() {
                 <td className="py-4 px-6">
                   <div className="flex gap-3 text-gray-500">
                     <Link
-                      to={`/dashboard/writer/${item._id}`}
+                      to={`/dashboard/writer/edit/${item._id}`}
                       className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-800"
                     >
                       <FaEdit />
                     </Link>
-                    <Link
-                      to="#"
+                    <button
+                      onClick={() => handleDeleteWriter(item._id)}
                       className="p-2 bg-red-500 text-white rounded hover:bg-red-800"
                     >
-                      <FaTrashAlt />
-                    </Link>
+                      {deletingId === item._id ? (
+                        <ImSpinner8 className="animate-spin" />
+                      ) : (
+                        <FaTrashAlt />
+                      )}
+                    </button>
                   </div>
                 </td>
               </tr>

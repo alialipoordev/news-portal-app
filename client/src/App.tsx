@@ -13,6 +13,7 @@ import CreateNewsPage from "./dashboard/pages/CreateNewsPage";
 import WriterPage from "./dashboard/pages/WriterPage";
 import { useContext } from "react";
 import storeContext from "./context/storeContext";
+import WriterAdminEditPage from "./dashboard/pages/WriterAdminEditPage";
 
 function App() {
   const { store } = useContext(storeContext);
@@ -43,6 +44,10 @@ function App() {
                 <Route path="admin" element={<AdminPage />} />
                 <Route path="writers" element={<WritersPage />} />
                 <Route path="writer/add" element={<AddWriterPage />} />
+                <Route
+                  path="writer/edit/:id"
+                  element={<WriterAdminEditPage />}
+                />
               </Route>
 
               <Route path="" element={<ProtectRole role="writer" />}>

@@ -1,23 +1,23 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import BASE_URL from "../../config/config";
 import { ImSpinner8 } from "react-icons/im";
-import { ErrorAxios } from "../../types";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import BASE_URL from "../../config/config";
 import storeContext from "../../context/storeContext";
+import axios from "axios";
+import { ErrorAxios } from "../../types";
 
-function AddWriterPage() {
+function WriterAdminEditPage() {
   const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     email: "",
-    password: "",
+    role: "",
   });
-
-  const { store } = useContext(storeContext);
   const navigate = useNavigate();
+  const { store } = useContext(storeContext);
+  const { id } = useParams();
 
   function inputChangeHandler(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -28,12 +28,29 @@ function AddWriterPage() {
     });
   }
 
+  useEffect(() => {
+    const getWriterData = async () => {
+      try {
+        const { data } = await axios.get(`${BASE_URL}/api/news/writer/${id}`, {
+          headers: { Authorization: `Bearer ${store.token}` },
+        });
+        setFormData({
+          ...data.writer,
+        });
+      } catch {
+        toast.error("Failed to load writer data!");
+      }
+    };
+
+    getWriterData();
+  }, [id]);
+
   async function submitHandler(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       setLoader(true);
-      const { data } = await axios.post(
-        `${BASE_URL}/api/writer/add`,
+      const { data } = await axios.put(
+        `${BASE_URL}/api/update/writer/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${store.token}` },
@@ -52,7 +69,7 @@ function AddWriterPage() {
   return (
     <div className="bg-white rounded-md">
       <div className="flex justify-between p-4">
-        <h2 className="text-xl font-semibold">Add Writers</h2>
+        <h2 className="text-xl font-semibold">Edit Writers</h2>
         <Link
           className="px-3 py-[6px] bg-blue-500 rounded-md text-white hover:bg-blue-800"
           to="/dashboard/writers"
@@ -130,21 +147,23 @@ function AddWriterPage() {
 
             <div className="flex flex-col gap-y-2">
               <label
-                htmlFor="password"
+                htmlFor="role"
                 className="text-md font-semibold text-gray-600"
               >
-                Password
+                Category
               </label>
-              <input
-                value={formData.password}
+              <select
+                value={formData.role}
                 onChange={inputChangeHandler}
                 required
-                type="password"
-                placeholder="Password"
-                name="password"
+                name="role"
+                id="role"
                 className="px-3 py-2 rounded-md outline-0 border border-gray-300 focus:border-blue-500 h-10"
-                id="password"
-              />
+              >
+                <option value="">--- Select Role ---</option>
+                <option value="admin">Admin</option>
+                <option value="writer">Writer</option>
+              </select>
             </div>
           </div>
 
@@ -153,7 +172,11 @@ function AddWriterPage() {
               disabled={loader}
               className="px-3 py-[6px] bg-blue-500 rounded-md text-white hover:bg-blue-800"
             >
-              {loader ? <ImSpinner8 className="animate-spin" /> : "Add Writer"}
+              {loader ? (
+                <ImSpinner8 className="animate-spin" />
+              ) : (
+                "Update Writer"
+              )}
             </button>
           </div>
         </form>
@@ -162,4 +185,4 @@ function AddWriterPage() {
   );
 }
 
-export default AddWriterPage;
+export default WriterAdminEditPage;

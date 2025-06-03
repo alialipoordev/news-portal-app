@@ -1,6 +1,7 @@
 const authModel = require("../models/authModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 class AuthController {
   login = async (req, res) => {
@@ -83,6 +84,79 @@ class AuthController {
       return res.status(200).json({ writers });
     } catch (error) {
       console.error("Error in get_writers:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  get_writerById = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+
+      const writer = await authModel
+        .findById(id)
+        .select("name email role category -_id");
+      if (!writer) return res.status(404).json({ message: "Writer not found" });
+
+      return res.status(200).json({ writer });
+    } catch (error) {
+      console.error("Error in get_writerById:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  update_writer = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid writer ID" });
+      }
+
+      const writer = await authModel.findById(id);
+
+      if (!writer) {
+        return res.status(404).json({ message: "Writer not found" });
+      }
+
+      const { name, email, category, role } = req.body;
+
+      if (!name?.trim() || !email?.trim() || !category?.trim() || !role?.trim())
+        return res.status(400).json({ message: "All fields are required" });
+
+      writer.name = name;
+      writer.email = email;
+      writer.category = category;
+      writer.role = role;
+
+      await writer.save();
+
+      return res.status(200).json({
+        message: "Writer updated successfully",
+      });
+    } catch (error) {
+      console.error("Error in update_writer:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  delete_writer = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid writer ID" });
+      }
+
+      const writer = await authModel.findByIdAndDelete(id);
+      if (!writer) return res.status(404).json({ message: "Writer not found" });
+
+      return res.status(200).json({ message: "Writer deleted successfully" });
+    } catch (error) {
+      console.error("Error in delete_writer:", error);
       return res.status(500).json({ message: "Server error" });
     }
   };

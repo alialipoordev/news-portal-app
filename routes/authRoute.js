@@ -19,4 +19,25 @@ router.get(
   authController.get_writers
 );
 
+router.get(
+  "/api/news/writer/:id",
+  middleware.auth,
+  middleware.role,
+  authController.get_writerById
+);
+
+router.put(
+  "/api/update/writer/:id",
+  middleware.auth,
+  middleware.role,
+  authController.update_writer
+);
+
+router.delete(
+  "/api/delete/writer/:id",
+  middleware.auth,
+  middleware.role,
+  authController.delete_writer
+);
+
 module.exports = router;
