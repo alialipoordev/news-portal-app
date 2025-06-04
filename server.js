@@ -7,6 +7,7 @@ const db_connect = require("./utils/db");
 
 // Routes
 const authRoute = require("./routes/authRoute");
+const newsRoute = require("./routes/newsRoute");
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(corsOptions);
 const port = process.env.PORT;
 
 app.use("/", authRoute);
+app.use("/", newsRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello Easy!");

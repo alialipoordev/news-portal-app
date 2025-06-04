@@ -1,13 +1,62 @@
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaImages } from "react-icons/fa";
 import JoditEditor from "jodit-react";
 import ImageGalleryModal from "../components/ImageGalleryModal";
+import { ErrorAxios } from "../../types";
+import toast from "react-hot-toast";
+import storeContext from "../../context/storeContext";
+import axios from "axios";
+import BASE_URL from "../../config/config";
 
 function CreateNewsPage() {
-  const [loader, setLoader] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const [show, setShow] = useState(false);
+  const [loader, setLoader] = useState(false);
+
   const [images, setImages] = useState([]);
+  const [image, setImage] = useState<File | string>("");
+  const [img, setImg] = useState("");
+
+  const { store } = useContext(storeContext);
+  const editor = useRef(null);
+
+  const imageHandle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (files && files.length > 0) {
+      setImg(URL.createObjectURL(files[0]));
+      setImage(files[0]);
+    }
+  };
+
+  async function submitHandler(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("image", image);
+
+    try {
+      setLoader(true);
+      const { data } = await axios.post(`${BASE_URL}/api/news/add`, formData, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+      setLoader(false);
+      toast.success(data.message);
+
+      // Reset Form
+      setTitle("");
+      setDescription("");
+      setImage("");
+      setImg("");
+    } catch (error) {
+      console.log(error);
+      toast.error((error as ErrorAxios).response?.data.message);
+      setLoader(false);
+    }
+  }
 
   return (
     <div className="bg-white shadow-md rounded-md p-6">
@@ -21,7 +70,7 @@ function CreateNewsPage() {
         </Link>
       </div>
 
-      <form>
+      <form onSubmit={submitHandler}>
         <div>
           <label
             htmlFor="title"
@@ -30,6 +79,8 @@ function CreateNewsPage() {
             Title
           </label>
           <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             type="text"
             placeholder="Enter News Title"
             name="title"
@@ -44,10 +95,22 @@ function CreateNewsPage() {
             htmlFor="img"
             className="w-full h-[240px] flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-gray-500 rounded-lg text-gray-500 hover:border-blue-500 transition mt-4"
           >
-            <FaImages className="text-4xl mb-2" />
-            <span className="font-medium">Select Image</span>
+            {img ? (
+              <img src={img} className="w-full h-full" alt="image" />
+            ) : (
+              <div className="flex justify-center items-center flex-col gap-y-2">
+                <FaImages className="text-4xl mb-2" />
+                <span className="font-medium">Select Image</span>
+              </div>
+            )}
           </label>
-          <input type="file" className="hidden" id="img" required />
+          <input
+            onChange={imageHandle}
+            type="file"
+            className="hidden"
+            id="img"
+            required
+          />
         </div>
 
         <div>
@@ -66,7 +129,14 @@ function CreateNewsPage() {
             </div>
           </div>
 
-          <JoditEditor className="w-full border border-gray-400 rounded-md" />
+          <JoditEditor
+            ref={editor}
+            value={description}
+            onChange={() => {}}
+            onBlur={(value) => setDescription(value)}
+            tabIndex={1}
+            className="w-full border border-gray-400 rounded-md"
+          />
         </div>
 
         <div className="mt-4">
