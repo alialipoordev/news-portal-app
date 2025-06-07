@@ -1,9 +1,9 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaImages } from "react-icons/fa";
 import JoditEditor from "jodit-react";
 import ImageGalleryModal from "../components/ImageGalleryModal";
-import { ErrorAxios } from "../../types";
+import { ErrorAxios, UploadedImage } from "../../types";
 import toast from "react-hot-toast";
 import storeContext from "../../context/storeContext";
 import axios from "axios";
@@ -15,8 +15,9 @@ function CreateNewsPage() {
 
   const [show, setShow] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [imagesLoader, setImagesLoader] = useState(false);
 
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<UploadedImage[]>([]);
   const [image, setImage] = useState<File | string>("");
   const [img, setImg] = useState("");
 
@@ -28,6 +29,37 @@ function CreateNewsPage() {
     if (files && files.length > 0) {
       setImg(URL.createObjectURL(files[0]));
       setImage(files[0]);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      const formData = new FormData();
+      for (const file of Array.from(files)) {
+        formData.append("images", file);
+      }
+      setImagesLoader(true);
+      const { data } = await axios.post(
+        `${BASE_URL}/api/gallery/images/add`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${store.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setImagesLoader(false);
+      setImages([...images, data.images]);
+      toast.success(data.message);
+      getImages();
+      console.log(data);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      setImagesLoader(false);
     }
   };
 
@@ -57,6 +89,21 @@ function CreateNewsPage() {
       setLoader(false);
     }
   }
+
+  async function getImages() {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/gallery/images`, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+      setImages(data.images);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getImages();
+  }, []);
 
   return (
     <div className="bg-white shadow-md rounded-md p-6">
@@ -109,6 +156,7 @@ function CreateNewsPage() {
             type="file"
             className="hidden"
             id="img"
+            name="img"
             required
           />
         </div>
@@ -149,8 +197,20 @@ function CreateNewsPage() {
           </button>
         </div>
       </form>
-      {show && <ImageGalleryModal setShow={setShow} images={images} />}
-      <input type="file" multiple id="images" className="hidden" />
+      {show && (
+        <ImageGalleryModal
+          setShow={setShow}
+          images={images}
+          loader={imagesLoader}
+        />
+      )}
+      <input
+        onChange={handleImageUpload}
+        type="file"
+        multiple
+        id="images"
+        className="hidden"
+      />
     </div>
   );
 }

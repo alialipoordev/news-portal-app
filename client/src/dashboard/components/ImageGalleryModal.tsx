@@ -1,7 +1,23 @@
-import { FaImages } from "react-icons/fa";
+import { FaImages, FaSpinner } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
+import { UploadedImage } from "../../types";
+import copy from "copy-text-to-clipboard";
+import toast from "react-hot-toast";
 
-function ImageGalleryModal({ images, setShow }) {
+function ImageGalleryModal({
+  images,
+  setShow,
+  loader,
+}: {
+  images: UploadedImage[];
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  loader: boolean;
+}) {
+  const copyToClipboard = (url: string) => {
+    copy(url);
+    toast.success("Image url copied to clipboard");
+  };
+
   return (
     <div className="w-screen h-screen fixed left-0 top-0 z-[9999]">
       <div className="w-full h-full relative">
@@ -23,16 +39,35 @@ function ImageGalleryModal({ images, setShow }) {
               className={`w-full h-[180px] flex rounded text-[#404040] gap-2 justify-center items-center cursor-pointer border-2 border-dashed`}
             >
               <div className="flex justify-center items-center flex-col gap-y-2">
-                <span className="text-2xl">
-                  <FaImages />
-                </span>
-                <span>Select Image</span>
+                {loader ? (
+                  <FaSpinner className="animate-spin w-7 h-7 text-blue-900 " />
+                ) : (
+                  <>
+                    <span className="text-2xl">
+                      <FaImages />
+                    </span>
+                    <span>Select Image</span>
+                  </>
+                )}
               </div>
             </label>
           </div>
 
-          <div className="grid grid-cols-4 gap-x-2 mt-4">
-            <div className="cursor-pointer">Recent Uploaded Image</div>
+          <div className="grid grid-cols-4 gap-x-2 gap-y-2 mt-4">
+            {images.length > 0 &&
+              images.map((img, i) => (
+                <div
+                  className="cursor-pointer"
+                  key={i}
+                  onClick={() => copyToClipboard(img.url)}
+                >
+                  <img
+                    src={img.url}
+                    alt="images"
+                    className="w-full h-[100px]"
+                  />
+                </div>
+              ))}
           </div>
         </div>
       </div>

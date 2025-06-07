@@ -28,3 +28,8 @@ export interface WriterUser {
   category: string;
   image: string;
 }
+
+export interface UploadedImage {
+  url: string;
+  writerId: string;
+}

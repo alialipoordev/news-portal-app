@@ -1,7 +1,10 @@
 const newsModel = require("../models/newsModel");
+const imageGalleryModel = require("../models/imageGalleryModel");
+
 const cloudinary = require("../utils/cloudinary");
 const { formidable } = require("formidable");
 const moment = require("moment");
+const mongoose = require("mongoose");
 
 class NewsController {
   add_news = async (req, res) => {
@@ -36,6 +39,70 @@ class NewsController {
     } catch (error) {
       console.error("Upload Error:", error);
       return res.status(500).json({ message: "Internal server Error" });
+    }
+  };
+
+  get_images = async (req, res) => {
+    try {
+      const { id } = req.userInfo;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid writer ID" });
+      }
+
+      const images = await imageGalleryModel
+        .find({
+          writerId: id,
+        })
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json({ images });
+    } catch (error) {
+      console.error("Upload Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  add_images = async (req, res) => {
+    try {
+      const { id } = req.userInfo;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid writer ID" });
+      }
+
+      const form = formidable({ multiples: true });
+
+      form.parse(req, async (err, fields, files) => {
+        if (err) {
+          console.error("Formidable error:", err);
+          return res.status(400).json({ message: "File parsing failed" });
+        }
+
+        const fileList = Array.isArray(files.images)
+          ? files.images
+          : [files.images];
+
+        let uploadedImages = [];
+
+        for (const file of fileList) {
+          const { url } = await cloudinary.uploader.upload(file.filepath, {
+            folder: "news_images",
+          });
+
+          uploadedImages.push({ writerId: id, url });
+        }
+
+        const image = await imageGalleryModel.insertMany(uploadedImages);
+
+        return res.status(201).json({
+          message: "Images uploaded successfully",
+          images: image,
+        });
+      });
+    } catch (error) {
+      console.error("Upload Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
   };
 }
