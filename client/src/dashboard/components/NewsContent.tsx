@@ -1,9 +1,44 @@
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { convert } from "html-to-text";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+import storeContext from "../../context/storeContext";
+import BASE_URL from "../../config/config";
+import { ErrorAxios, NewsArticle } from "../../types";
+
 import { FaEye, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
-import profile from "../../assets/profile.png";
 
-function NewsContent() {
+function NewsContent({ role }: { role: string }) {
+  const { store } = useContext(storeContext);
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [allNews, setAllNews] = useState<NewsArticle[]>([]);
+
+  const hasFetchedRef = useRef(false);
+
+  const getNews = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/news`, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+      setAllNews(data.news);
+      setNews(data.news);
+      toast.success(data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error((error as ErrorAxios).response?.data.message);
+    }
+  };
+
+  useEffect(() => {
+    if (hasFetchedRef.current) return;
+
+    hasFetchedRef.current = true;
+    getNews();
+  }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen p-6">
       <div className="flex items-center gap-4 mb-6">
@@ -30,6 +65,9 @@ function NewsContent() {
               <th className="py-4 px-6 text-left">No</th>
               <th className="py-4 px-6 text-left">Title</th>
               <th className="py-4 px-6 text-left">Image</th>
+              {role === "admin" && (
+                <th className="py-4 px-6 text-left">Writer</th>
+              )}
               <th className="py-4 px-6 text-left">Category</th>
               <th className="py-4 px-6 text-left">Description</th>
               <th className="py-4 px-6 text-left">Date</th>
@@ -38,23 +76,32 @@ function NewsContent() {
             </tr>
           </thead>
           <tbody className="text-gray-600">
-            {[1, 2, 3].map((item, index) => (
+            {news.map((n, index) => (
               <tr key={index} className="border-t">
-                <td className="py-4 px-6">1</td>
-                <td className="py-4 px-6">News Title</td>
+                <td className="py-4 px-6">{index + 1}</td>
+                <td className="py-4 px-6">
+                  {n.title.length < 15 ? n.title : `${n.title.slice(0, 15)}...`}
+                </td>
                 <td className="py-4 px-6">
                   <img
                     className="w-10 h-10 rounded-full object-cover"
-                    src={profile}
+                    src={n.image}
                     alt="news"
                   />
                 </td>
-                <td className="py-4 px-6">Category Name</td>
-                <td className="py-4 px-6">Description</td>
-                <td className="py-4 px-6">12-08-2024</td>
+                {role === "admin" && (
+                  <td className="py-4 px-6 text-left">{n.name}</td>
+                )}
+                <td className="py-4 px-6">{n.category}</td>
+                <td className="py-4 px-6">
+                  {n.description.length < 15
+                    ? convert(n.description)
+                    : `${convert(n.description).slice(0, 15)}...`}
+                </td>
+                <td className="py-4 px-6">{n.date}</td>
                 <td className="py-4 px-6">
                   <span className="px-3 py-1 bg-green-200 rounded-full text-xs font-semibold">
-                    Active
+                    {n.status}
                   </span>
                 </td>
                 <td className="py-4 px-6">

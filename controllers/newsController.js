@@ -7,6 +7,27 @@ const moment = require("moment");
 const mongoose = require("mongoose");
 
 class NewsController {
+  get_news = async (req, res) => {
+    try {
+      const { role, id } = req.userInfo;
+
+      const query = role === "admin" ? {} : { writerId: id };
+
+      const news = await newsModel.find(query).sort({ createdAt: -1 }).lean();
+
+      return res.status(200).json({
+        message:
+          role === "admin"
+            ? "All news retrieved successfully"
+            : "Your news retrieved successfully",
+        news,
+      });
+    } catch (error) {
+      console.error("get_news Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   add_news = async (req, res) => {
     const { id, name, category } = req.userInfo;
     const form = formidable({});

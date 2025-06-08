@@ -33,3 +33,16 @@ export interface UploadedImage {
   url: string;
   writerId: string;
 }
+
+export interface NewsArticle {
+  writerId: string;
+  name: string;
+  title: string;
+  slug: string;
+  image: string;
+  category: string;
+  description: string;
+  date: string;
+  status: "pending" | "inactive" | "active";
+  count: number;
+}
