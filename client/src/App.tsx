@@ -1,6 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useContext } from "react";
+
 import ProtectDashboard from "./middleware/ProtectDashboard";
 import ProtectRole from "./middleware/ProtectRole";
+import storeContext from "./context/storeContext";
+
 import MainLayout from "./dashboard/layout/MainLayout";
 import LoginPage from "./dashboard/pages/LoginPage";
 import AdminPage from "./dashboard/pages/AdminPage";
@@ -11,9 +15,8 @@ import WritersPage from "./dashboard/pages/WritersPage";
 import AddWriterPage from "./dashboard/pages/AddWriterPage";
 import CreateNewsPage from "./dashboard/pages/CreateNewsPage";
 import WriterPage from "./dashboard/pages/WriterPage";
-import { useContext } from "react";
-import storeContext from "./context/storeContext";
 import WriterAdminEditPage from "./dashboard/pages/WriterAdminEditPage";
+import NewsEditPage from "./dashboard/pages/NewsEditPage";
 
 function App() {
   const { store } = useContext(storeContext);
@@ -53,6 +56,7 @@ function App() {
               <Route path="" element={<ProtectRole role="writer" />}>
                 <Route path="writer" element={<WriterPage />} />
                 <Route path="news/create" element={<CreateNewsPage />} />
+                <Route path="news/edit/:newsId" element={<NewsEditPage />} />
               </Route>
             </Route>
           </Route>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { convert } from "html-to-text";
 import axios from "axios";
@@ -16,8 +16,6 @@ function NewsContent({ role }: { role: string }) {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [allNews, setAllNews] = useState<NewsArticle[]>([]);
 
-  const hasFetchedRef = useRef(false);
-
   const getNews = async () => {
     try {
       const { data } = await axios.get(`${BASE_URL}/api/news`, {
@@ -25,7 +23,6 @@ function NewsContent({ role }: { role: string }) {
       });
       setAllNews(data.news);
       setNews(data.news);
-      toast.success(data.message);
     } catch (error) {
       console.log(error);
       toast.error((error as ErrorAxios).response?.data.message);
@@ -33,9 +30,6 @@ function NewsContent({ role }: { role: string }) {
   };
 
   useEffect(() => {
-    if (hasFetchedRef.current) return;
-
-    hasFetchedRef.current = true;
     getNews();
   }, []);
 
@@ -112,12 +106,14 @@ function NewsContent({ role }: { role: string }) {
                     >
                       <FaEye />
                     </Link>
-                    <Link
-                      to="#"
-                      className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-800"
-                    >
-                      <FaEdit />
-                    </Link>
+                    {store.userInfo?.role === "writer" && (
+                      <Link
+                        to={`/dashboard/news/edit/${n._id}`}
+                        className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-800"
+                      >
+                        <FaEdit />
+                      </Link>
+                    )}
                     <Link
                       to="#"
                       className="p-2 bg-red-500 text-white rounded hover:bg-red-800"

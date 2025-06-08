@@ -28,6 +28,17 @@ class NewsController {
     }
   };
 
+  get_news_edit = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const news = await newsModel.findById(id).lean();
+      res.json({ news });
+    } catch (error) {
+      console.error("get_news_edit Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   add_news = async (req, res) => {
     const { id, name, category } = req.userInfo;
     const form = formidable({});
@@ -63,6 +74,68 @@ class NewsController {
     }
   };
 
+  update_news = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const form = formidable({});
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid news ID" });
+      }
+
+      await form.parse(req, async (err, fields, files) => {
+        if (err) {
+          console.error("Form parse error:", err);
+          return res.status(400).json({ message: "Form data parsing failed" });
+        }
+
+        const news = await newsModel.findById(id);
+        if (!news) {
+          return res.status(404).json({ message: "News not found" });
+        }
+
+        const { title, description } = fields;
+
+        let imageUrl = news.image;
+
+        if (files.image) {
+          const parts = imageUrl.split("/");
+          const fileName = parts[parts.length - 1];
+          const publicId = fileName.split(".")[0];
+
+          if (publicId) {
+            await cloudinary.uploader.destroy(`news_images/${publicId}`);
+          }
+
+          const { url } = await cloudinary.uploader.upload(
+            files.image[0].filepath,
+            { folder: "news_images" }
+          );
+
+          imageUrl = url;
+        }
+
+        await newsModel.findByIdAndUpdate(
+          id,
+          {
+            title: title[0].trim(),
+            slug: title[0].trim().split(" ").join("-"),
+            description: description[0],
+            image: imageUrl,
+          },
+          { new: true }
+        );
+
+        return res.status(200).json({
+          message: "News updated successfully",
+        });
+      });
+    } catch (error) {
+      console.error("update_news Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   get_images = async (req, res) => {
     try {
       const { id } = req.userInfo;
@@ -94,7 +167,7 @@ class NewsController {
 
       const form = formidable({ multiples: true });
 
-      form.parse(req, async (err, fields, files) => {
+      await form.parse(req, async (err, fields, files) => {
         if (err) {
           console.error("Formidable error:", err);
           return res.status(400).json({ message: "File parsing failed" });

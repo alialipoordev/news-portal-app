@@ -45,4 +45,5 @@ export interface NewsArticle {
   date: string;
   status: "pending" | "inactive" | "active";
   count: number;
+  _id: string;
 }
