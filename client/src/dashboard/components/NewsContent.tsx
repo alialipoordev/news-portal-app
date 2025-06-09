@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { convert } from "html-to-text";
 import axios from "axios";
@@ -13,8 +13,22 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 
 function NewsContent({ role }: { role: string }) {
   const { store } = useContext(storeContext);
+
+  // News State
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [allNews, setAllNews] = useState<NewsArticle[]>([]);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [newsPerPage, setNewsPerPage] = useState(5);
+
+  const indexOfLastNews = currentPage * newsPerPage;
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  const currentNews = news.slice(indexOfFirstNews, indexOfLastNews);
+  const totalPages = Math.max(1, Math.ceil(news.length / newsPerPage));
+
+  // Search State
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const getNews = async () => {
     try {
@@ -44,6 +58,21 @@ function NewsContent({ role }: { role: string }) {
     }
   }
 
+  const handleSearch = () => {
+    const keyword = searchRef.current?.value.toLowerCase() || "";
+    if (!keyword) {
+      setNews(allNews);
+      setCurrentPage(1);
+      return;
+    }
+
+    const filtered = allNews.filter((item) =>
+      item.title.toLowerCase().includes(keyword)
+    );
+    setNews(filtered);
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     getNews();
   }, []);
@@ -61,6 +90,8 @@ function NewsContent({ role }: { role: string }) {
           <option value="active">Active</option>
         </select>
         <input
+          ref={searchRef}
+          onChange={handleSearch}
           type="text"
           placeholder="Search News"
           className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -85,7 +116,7 @@ function NewsContent({ role }: { role: string }) {
             </tr>
           </thead>
           <tbody className="text-gray-600">
-            {news.map((n, index) => (
+            {currentNews.map((n, index) => (
               <tr key={index} className="border-t">
                 <td className="py-4 px-6">{index + 1}</td>
                 <td className="py-4 px-6">
@@ -145,6 +176,11 @@ function NewsContent({ role }: { role: string }) {
           <div className="flex items-center gap-4">
             <label className="text-sm font-semibold">News Per Page:</label>
             <select
+              value={newsPerPage}
+              onChange={(e) => {
+                setNewsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
               name="category"
               id="category"
               className="px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -157,10 +193,33 @@ function NewsContent({ role }: { role: string }) {
           </div>
 
           <div className="flex items-center gap-4 text-sm text-gray-600">
-            <span>6/10 of 5</span>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
             <div className="flex gap-2">
-              <IoIosArrowBack className="w-6 h-6 text-gray-400 cursor-pointer hover:text-gray-800" />
-              <IoIosArrowForward className="w-6 h-6 text-gray-400 cursor-pointer hover:text-gray-800" />
+              <IoIosArrowBack
+                onClick={() =>
+                  currentPage > 1 && setCurrentPage((prev) => prev - 1)
+                }
+                className={`w-8 h-8 p-1 rounded-md transition-all duration-150 shadow-sm
+                  ${
+                    currentPage === 1
+                      ? "text-gray-300 bg-gray-100 cursor-not-allowed"
+                      : "text-gray-700 bg-white hover:bg-indigo-100 hover:text-indigo-600 cursor-pointer"
+                  }`}
+              />
+              <IoIosArrowForward
+                onClick={() => {
+                  if (currentPage < totalPages)
+                    setCurrentPage((prev) => prev + 1);
+                }}
+                className={`w-8 h-8 p-1 rounded-md transition-all duration-150 shadow-sm
+                  ${
+                    currentPage >= totalPages
+                      ? "text-gray-300 bg-gray-100 cursor-not-allowed"
+                      : "text-gray-700 bg-white hover:bg-indigo-100 hover:text-indigo-600 cursor-pointer"
+                  }`}
+              />
             </div>
           </div>
         </div>
