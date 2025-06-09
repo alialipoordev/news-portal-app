@@ -73,6 +73,20 @@ function NewsContent({ role }: { role: string }) {
     setCurrentPage(1);
   };
 
+  const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value;
+
+    if (!selected) {
+      setNews(allNews);
+      setCurrentPage(1);
+      return;
+    }
+
+    const filtered = allNews.filter((item) => item.status === selected);
+    setNews(filtered);
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     getNews();
   }, []);
@@ -81,6 +95,7 @@ function NewsContent({ role }: { role: string }) {
     <div className="bg-gray-50 min-h-screen p-6">
       <div className="flex items-center gap-4 mb-6">
         <select
+          onChange={handleStatusFilter}
           name="status"
           className="w-48 px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
         >
