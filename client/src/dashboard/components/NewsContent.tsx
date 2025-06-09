@@ -29,6 +29,21 @@ function NewsContent({ role }: { role: string }) {
     }
   };
 
+  async function handleDeleteNews(id: string) {
+    if (!window.confirm("Are your sure to delete news?")) return;
+
+    try {
+      const { data } = await axios.delete(`${BASE_URL}/api/news/delete/${id}`, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+      toast.success(data.message);
+      getNews();
+    } catch (error) {
+      console.log(error);
+      toast.error((error as ErrorAxios).response?.data.message);
+    }
+  }
+
   useEffect(() => {
     getNews();
   }, []);
@@ -114,12 +129,12 @@ function NewsContent({ role }: { role: string }) {
                         <FaEdit />
                       </Link>
                     )}
-                    <Link
-                      to="#"
+                    <button
+                      onClick={() => handleDeleteNews(n._id)}
                       className="p-2 bg-red-500 text-white rounded hover:bg-red-800"
                     >
                       <FaTrashAlt />
-                    </Link>
+                    </button>
                   </div>
                 </td>
               </tr>

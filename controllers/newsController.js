@@ -136,6 +136,30 @@ class NewsController {
     }
   };
 
+  delete_news = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const news = await newsModel.findById(id);
+      if (!news) {
+        return res.status(404).json({ message: "News not found" });
+      }
+
+      let imageUrl = news.image;
+
+      const publicId = imageUrl.split("/").pop().split(".")[0];
+      if (publicId) {
+        await cloudinary.uploader.destroy(`news_images/${publicId}`);
+      }
+
+      await newsModel.findByIdAndDelete(id);
+      return res.status(200).json({ message: "News deleted successfully" });
+    } catch (error) {
+      console.error("delete_news Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   get_images = async (req, res) => {
     try {
       const { id } = req.userInfo;
