@@ -164,7 +164,6 @@ class NewsController {
     const { role } = req.userInfo;
     const { id } = req.params;
     const { status } = req.body;
-    console.log(status);
 
     try {
       if (role !== "admin") {
