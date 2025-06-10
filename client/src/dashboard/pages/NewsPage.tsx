@@ -20,7 +20,7 @@ function NewsPage() {
           </Link>
         )}
       </div>
-      <NewsContent role={store.userInfo?.role || ""} />
+      <NewsContent />
     </div>
   );
 }

@@ -11,8 +11,9 @@ import { ErrorAxios, NewsArticle } from "../../types";
 import { FaEye, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 
-function NewsContent({ role }: { role: string }) {
+function NewsContent() {
   const { store } = useContext(storeContext);
+  const role = store.userInfo?.role;
 
   // News State
   const [news, setNews] = useState<NewsArticle[]>([]);
@@ -29,6 +30,9 @@ function NewsContent({ role }: { role: string }) {
 
   // Search State
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // Filter State
+  const [statusFilter, setStatusFilter] = useState("");
 
   const getNews = async () => {
     try {
@@ -75,6 +79,7 @@ function NewsContent({ role }: { role: string }) {
 
   const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = e.target.value;
+    setStatusFilter(selected);
 
     if (!selected) {
       setNews(allNews);
@@ -85,6 +90,47 @@ function NewsContent({ role }: { role: string }) {
     const filtered = allNews.filter((item) => item.status === selected);
     setNews(filtered);
     setCurrentPage(1);
+  };
+
+  const handleStatusChange = async (id: string, currentStatus: string) => {
+    const nextStatus =
+      currentStatus === "pending"
+        ? "active"
+        : currentStatus === "active"
+        ? "inactive"
+        : "pending";
+
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/news/status/${id}`,
+        { status: nextStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${store.token}`,
+          },
+        }
+      );
+      toast.success(data.message);
+
+      const res = await axios.get(`${BASE_URL}/api/news`, {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
+
+      const updatedNews = res.data.news;
+      setAllNews(updatedNews);
+
+      if (statusFilter) {
+        const filtered = updatedNews.filter(
+          (item: NewsArticle) => item.status === statusFilter
+        );
+        setNews(filtered);
+      } else {
+        setNews(updatedNews);
+      }
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -155,10 +201,38 @@ function NewsContent({ role }: { role: string }) {
                 </td>
                 <td className="py-4 px-6">{n.date}</td>
                 <td className="py-4 px-6">
-                  <span className="px-3 py-1 bg-green-200 rounded-full text-xs font-semibold">
-                    {n.status}
-                  </span>
+                  {role === "admin" ? (
+                    <span
+                      onClick={() => handleStatusChange(n._id, n.status)}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all
+                        ${
+                          n.status === "active"
+                            ? "bg-green-200 text-green-800 hover:bg-green-300"
+                            : n.status === "pending"
+                            ? "bg-blue-200 text-blue-800 hover:bg-blue-300"
+                            : "bg-red-200 text-red-700 hover:bg-red-300"
+                        }
+                      `}
+                    >
+                      {n.status}
+                    </span>
+                  ) : (
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold
+                        ${
+                          n.status === "active"
+                            ? "bg-green-200 text-green-800"
+                            : n.status === "pending"
+                            ? "bg-blue-200 text-blue-800"
+                            : "bg-red-200 text-red-800"
+                        }
+                      `}
+                    >
+                      {n.status}
+                    </span>
+                  )}
                 </td>
+
                 <td className="py-4 px-6">
                   <div className="flex gap-3 text-gray-500">
                     <Link

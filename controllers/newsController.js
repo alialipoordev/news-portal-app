@@ -160,6 +160,40 @@ class NewsController {
     }
   };
 
+  update_news_status = async (req, res) => {
+    const { role } = req.userInfo;
+    const { id } = req.params;
+    const { status } = req.body;
+    console.log(status);
+
+    try {
+      if (role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid news ID" });
+      }
+
+      const news = await newsModel.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      );
+
+      if (!news) {
+        return res.status(404).json({ message: "News not found" });
+      }
+
+      return res.status(200).json({
+        message: `News status successfully updated to "${news.status}".`,
+      });
+    } catch (error) {
+      console.error("update_news_status Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   get_images = async (req, res) => {
     try {
       const { id } = req.userInfo;

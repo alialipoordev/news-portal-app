@@ -11,6 +11,11 @@ router.delete(
   middleware.auth,
   newsController.delete_news
 );
+router.put(
+  "/api/news/status/:id",
+  middleware.auth,
+  newsController.update_news_status
+);
 router.post("/api/news/add", middleware.auth, newsController.add_news);
 router.get("/api/gallery/images", middleware.auth, newsController.get_images);
 router.post(
