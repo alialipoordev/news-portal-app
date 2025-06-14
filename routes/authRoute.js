@@ -40,4 +40,25 @@ router.delete(
   authController.delete_writer
 );
 
+router.get(
+  "/api/profile",
+  middleware.auth,
+  middleware.role,
+  authController.get_profile
+);
+
+router.put(
+  "/api/profile/update",
+  middleware.auth,
+  middleware.role,
+  authController.update_profile
+);
+
+router.delete(
+  "/api/profile/image",
+  middleware.auth,
+  middleware.role,
+  authController.delete_profile_img
+);
+
 module.exports = router;

@@ -5,6 +5,8 @@ export interface DecodedToken {
   role: string;
   exp: number;
   iat: number;
+  category: string;
+  image: string;
 }
 
 export type StoreAction =

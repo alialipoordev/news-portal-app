@@ -1,7 +1,9 @@
 const authModel = require("../models/authModel");
 const bcrypt = require("bcrypt");
+const { formidable } = require("formidable");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const cloudinary = require("../utils/cloudinary");
 
 class AuthController {
   login = async (req, res) => {
@@ -157,6 +159,104 @@ class AuthController {
       return res.status(200).json({ message: "Writer deleted successfully" });
     } catch (error) {
       console.error("Error in delete_writer:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  get_profile = async (req, res) => {
+    try {
+      const userId = req.userInfo?.id;
+
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: "Invalid user ID." });
+      }
+
+      const user = await authModel.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      return res.status(200).json({ user });
+    } catch (error) {
+      console.error("Get Profile Error:", error);
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  };
+
+  update_profile = async (req, res) => {
+    const { id } = req.userInfo;
+    const form = formidable({ multiples: true });
+
+    await form.parse(req, async (err, fields, files) => {
+      if (err) return res.status(400).json({ message: "Form parsing failed" });
+
+      try {
+        const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
+        const email = Array.isArray(fields.email)
+          ? fields.email[0]
+          : fields.email;
+        const imageFile = Array.isArray(files.image)
+          ? files.image[0]
+          : files.image;
+
+        if (!name || !email)
+          return res.status(400).json({ message: "Please fill all fields" });
+
+        const user = await authModel.findById(id);
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        if (imageFile && imageFile.filepath) {
+          if (user.image) {
+            const publicId = user.image.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(`news_images/${publicId}`);
+          }
+
+          const { url } = await cloudinary.uploader.upload(imageFile.filepath, {
+            folder: "news_images",
+          });
+
+          user.image = url;
+        }
+
+        user.name = name.toString();
+        user.email = email.toString();
+
+        await user.save();
+
+        return res.status(200).json({ message: "Profile updated" });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error" });
+      }
+    });
+  };
+
+  delete_profile_img = async (req, res) => {
+    try {
+      const { id } = req.userInfo;
+
+      const user = await authModel.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (!user.image) {
+        return res.status(400).json({ message: "No profile image to delete" });
+      }
+
+      const publicId = user.image.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`news_images/${publicId}`);
+
+      user.image = "";
+      await user.save();
+
+      return res.status(200).json({
+        message: "Profile image deleted successfully",
+      });
+    } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Server error" });
     }
   };

@@ -21,8 +21,9 @@ class Middleware {
   role = async (req, res, next) => {
     const { userInfo } = req;
 
-    if (!userInfo || userInfo.role !== "admin")
-      return res.status(403).json({ message: "Forbidden: Admins only" });
+    if (!userInfo || !["admin", "writer"].includes(userInfo.role)) {
+      return res.status(403).json({ message: "Forbidden: Access denied" });
+    }
 
     next();
   };
