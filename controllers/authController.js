@@ -260,6 +260,52 @@ class AuthController {
       return res.status(500).json({ message: "Server error" });
     }
   };
+
+  change_password = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const { id } = req.userInfo;
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Both old and new password are required." });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters long." });
+    }
+
+    try {
+      const user = await authModel.findById(id).select("+password");
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch)
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
+
+      if (oldPassword === newPassword)
+        return res.status(400).json({
+          message: "New password must be different from the old password.",
+        });
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      user.password = hashedPassword;
+      await user.save();
+
+      return res.status(200).json({ message: "Password changed successfully" });
+    } catch (err) {
+      console.error("Error while updating password:", err);
+      return res
+        .status(500)
+        .json({ message: "An error occurred while changing the password." });
+    }
+  };
 }
 
 module.exports = new AuthController();

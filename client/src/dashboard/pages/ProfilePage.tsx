@@ -16,6 +16,9 @@ function ProfilePage() {
 
   const [selectedImageFile, setSelectedImageFile] = useState<string | File>("");
 
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
   // fetch profile data
   const fetchProfileData = async () => {
     try {
@@ -106,6 +109,30 @@ function ProfilePage() {
     } catch (err) {
       toast.error(
         (err as ErrorAxios).response?.data.message || "Update failed"
+      );
+    }
+  };
+
+  // Handle change password
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        `${BASE_URL}/api/profile/change-password`,
+        { oldPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${store.token}`,
+          },
+        }
+      );
+      toast.success(data.message);
+      setOldPassword("");
+      setNewPassword("");
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        (error as ErrorAxios).response?.data.message || "Password change failed"
       );
     }
   };
@@ -208,7 +235,7 @@ function ProfilePage() {
       </div>
       <div className="bg-white p-6 rounded-lg shadow-md text-gray-700">
         <h2 className="text-lg font-bold text-center mb-5">Change Password</h2>
-        <form>
+        <form onSubmit={handleChangePassword}>
           <div className="space-y-4">
             <div>
               <label
@@ -218,11 +245,14 @@ function ProfilePage() {
                 Old Password
               </label>
               <input
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
                 type="password"
                 id="old_password"
                 name="old_password"
                 placeholder="Enter Old Password"
                 className="w-full px-3 py-2 mt-2 border border-gray-400 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition duration-300"
+                required
               />
             </div>
 
@@ -234,11 +264,14 @@ function ProfilePage() {
                 New Password
               </label>
               <input
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 type="password"
                 id="new_password"
                 name="new_password"
                 placeholder="Enter New Password"
                 className="w-full px-3 py-2 mt-2 border border-gray-400 rounded-md focus:ring-2 focus:ring-blue-500 outline-none transition duration-300"
+                required
               />
             </div>
           </div>

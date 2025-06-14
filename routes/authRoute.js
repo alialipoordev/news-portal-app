@@ -47,6 +47,12 @@ router.get(
   authController.get_profile
 );
 
+router.post(
+  "/api/profile/change-password",
+  middleware.auth,
+  authController.change_password
+);
+
 router.put(
   "/api/profile/update",
   middleware.auth,
