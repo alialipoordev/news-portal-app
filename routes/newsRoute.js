@@ -6,6 +6,7 @@ const router = require("express").Router();
 router.get(
   "/api/news/statistics",
   middleware.auth,
+  middleware.role,
   newsController.get_news_statistics
 );
 router.get("/api/news", middleware.auth, newsController.get_news);

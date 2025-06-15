@@ -1,6 +1,11 @@
-import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import news from "../../assets/profile.png";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import BASE_URL from "../../config/config";
+import storeContext from "../../context/storeContext";
+import useNews from "../../hooks/useNews";
+import NewsTable from "../components/NewsTable";
+import PaginationControls from "../components/PaginationControls";
 
 type StatItem = {
   title: string;
@@ -8,14 +13,67 @@ type StatItem = {
   color: string;
 };
 
-const statsData: StatItem[] = [
-  { title: "Writer Total News", value: 50, color: "text-red-500" },
-  { title: "Writer Pending News", value: 55, color: "text-purple-500" },
-  { title: "Writer Active News", value: 22, color: "text-cyan-500" },
-  { title: "Writer Inactive News", value: 15, color: "text-blue-500" },
-];
-
 function WriterPage() {
+  const { store } = useContext(storeContext);
+  const role = store.userInfo?.role;
+  const { news } = useNews(store.token);
+
+  const [newsStatistics, setNewsStatistics] = useState({
+    totalNews: 0,
+    pendingNews: 0,
+    activeNews: 0,
+    inactiveNews: 0,
+  });
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [newsPerPage, setNewsPerPage] = useState(5);
+
+  const indexOfLastNews = currentPage * newsPerPage;
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  const currentNews = news.slice(indexOfFirstNews, indexOfLastNews);
+  const totalPages = Math.max(1, Math.ceil(news.length / newsPerPage));
+
+  const statsData: StatItem[] = [
+    {
+      title: "Writer Total News",
+      value: newsStatistics.totalNews,
+      color: "text-red-500",
+    },
+    {
+      title: "Writer Pending News",
+      value: newsStatistics.pendingNews,
+      color: "text-purple-500",
+    },
+    {
+      title: "Writer Active News",
+      value: newsStatistics.activeNews,
+      color: "text-cyan-500",
+    },
+    {
+      title: "Writer Inactive News",
+      value: newsStatistics.inactiveNews,
+      color: "text-blue-500",
+    },
+  ];
+
+  const fetchNewsStatistics = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/news/statistics`, {
+        headers: {
+          Authorization: `Bearer ${store.token}`,
+        },
+      });
+      setNewsStatistics(data);
+    } catch (error) {
+      console.error("Error fetching news statistics:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewsStatistics();
+  }, []);
+
   return (
     <div className="mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -38,7 +96,7 @@ function WriterPage() {
         <div className="flex justify-between items-center pb-4 border-b border-gray-500">
           <h2 className="text-xl font-bold text-gray-600">Recent News</h2>
           <Link
-            to="/news"
+            to="/dashboard/news"
             className="text-blue-500 hover:text-blue-800 font-semibold transition duration-300"
           >
             View All
@@ -46,53 +104,18 @@ function WriterPage() {
         </div>
 
         <div className="overflow-x-auto mt-6">
-          <table className="w-full table-auto bg-white shadow-lg rounded-lg overflow-hidden">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-sm">
-              <tr>
-                <th className="py-4 px-6 text-left">No</th>
-                <th className="py-4 px-6 text-left">Title</th>
-                <th className="py-4 px-6 text-left">Image</th>
-                <th className="py-4 px-6 text-left">Category</th>
-                <th className="py-4 px-6 text-left">Description</th>
-                <th className="py-4 px-6 text-left">Date</th>
-                <th className="py-4 px-6 text-left">Status</th>
-                <th className="py-4 px-6 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-600">
-              {[1, 2, 3].map((item, index) => (
-                <tr key={index} className="border-t">
-                  <td className="py-4 px-6">1</td>
-                  <td className="py-4 px-6">News Title</td>
-                  <td className="py-4 px-6">
-                    <img
-                      className="w-10 h-10 rounded-full object-cover"
-                      src={news}
-                      alt="news"
-                    />
-                  </td>
-                  <td className="py-4 px-6">Category Name</td>
-                  <td className="py-4 px-6">Description</td>
-                  <td className="py-4 px-6">12-08-2024</td>
-                  <td className="py-4 px-6">
-                    <span className="px-3 py-1 bg-green-200 rounded-full text-xs font-semibold">
-                      Active
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex gap-3 text-gray-500">
-                      <Link
-                        to="#"
-                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-800"
-                      >
-                        <FaEye />
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <NewsTable
+            currentNews={currentNews}
+            role={role as "admin" | "writer"}
+          />
+
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            newsPerPage={newsPerPage}
+            setCurrentPage={setCurrentPage}
+            setNewsPerPage={setNewsPerPage}
+          />
         </div>
       </div>
     </div>

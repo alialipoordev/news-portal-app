@@ -70,7 +70,7 @@ const AdminPage = () => {
           Authorization: `Bearer ${store.token}`,
         },
       });
-      setNewsStatistics({ ...data, writers: data.totalWriters });
+      setNewsStatistics(data);
     } catch (error) {
       console.error("Error fetching news statistics:", error);
     }

@@ -42,30 +42,54 @@ class NewsController {
 
   get_news_statistics = async (req, res) => {
     try {
-      const { role } = req.userInfo;
+      const { role, id } = req.userInfo;
 
-      const totalNews = await newsModel.countDocuments();
-      const pendingNews = await newsModel.countDocuments({ status: "pending" });
-      const activeNews = await newsModel.countDocuments({ status: "active" });
-      const inactiveNews = await newsModel.countDocuments({
-        status: "inactive",
-      });
-
-      let totalWriters;
+      let data = {};
 
       if (role === "admin") {
-        totalWriters = await authModel.countDocuments({ role: "writer" });
+        const totalNews = await newsModel.countDocuments();
+        const pendingNews = await newsModel.countDocuments({
+          status: "pending",
+        });
+        const activeNews = await newsModel.countDocuments({ status: "active" });
+        const inactiveNews = await newsModel.countDocuments({
+          status: "inactive",
+        });
+        const totalWriters = await authModel.countDocuments({ role: "writer" });
+
+        data = {
+          totalNews,
+          pendingNews,
+          activeNews,
+          inactiveNews,
+          writers: totalWriters,
+        };
       }
 
-      const data = {
-        totalNews,
-        pendingNews,
-        activeNews,
-        inactiveNews,
-      };
+      if (role === "writer") {
+        const myTotalNews = await newsModel.countDocuments({
+          writerId: id,
+        });
+        const myPendingNews = await newsModel.countDocuments({
+          writerId: id,
 
-      if (role === "admin") {
-        data.totalWriters = totalWriters;
+          status: "pending",
+        });
+        const myActiveNews = await newsModel.countDocuments({
+          writerId: id,
+          status: "active",
+        });
+        const myInactiveNews = await newsModel.countDocuments({
+          writerId: id,
+          status: "inactive",
+        });
+
+        data = {
+          totalNews: myTotalNews,
+          pendingNews: myPendingNews,
+          activeNews: myActiveNews,
+          inactiveNews: myInactiveNews,
+        };
       }
 
       return res.status(200).json(data);
