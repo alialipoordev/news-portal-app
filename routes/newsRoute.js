@@ -3,8 +3,14 @@ const middleware = require("../middlewares/middleware");
 
 const router = require("express").Router();
 
+router.get(
+  "/api/news/statistics",
+  middleware.auth,
+  newsController.get_news_statistics
+);
 router.get("/api/news", middleware.auth, newsController.get_news);
 router.get("/api/news/:id", middleware.auth, newsController.get_news_edit);
+
 router.put("/api/news/update/:id", middleware.auth, newsController.update_news);
 router.delete(
   "/api/news/delete/:id",

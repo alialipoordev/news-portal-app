@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { deleteNews, fetchNews, updateNewsStatus } from "../api/news.api";
 import { ErrorAxios, NewsArticle } from "../types";
 
-const useNews = (token: string | null, statusFilter: string) => {
+const useNews = (token: string | null, statusFilter?: string) => {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [allNews, setAllNews] = useState<NewsArticle[]>([]);
 

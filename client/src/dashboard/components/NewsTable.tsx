@@ -7,8 +7,8 @@ import StatusBadge from "./StatusBadge";
 interface NewsTableProps {
   role: "admin" | "writer";
   currentNews: NewsArticle[];
-  handleDeleteNews: (id: string) => Promise<void>;
-  handleStatusChange: (id: string, currentStatus: string) => Promise<void>;
+  handleDeleteNews?: (id: string) => Promise<void>;
+  handleStatusChange?: (id: string, currentStatus: string) => Promise<void>;
 }
 
 function NewsTable({
@@ -73,7 +73,7 @@ function NewsTable({
                   <StatusBadge
                     status={n.status}
                     onClick={
-                      role === "admin"
+                      role === "admin" && handleStatusChange
                         ? () => handleStatusChange(n._id, n.status)
                         : undefined
                     }
@@ -97,12 +97,14 @@ function NewsTable({
                         <FaEdit />
                       </Link>
                     )}
-                    <button
-                      onClick={() => handleDeleteNews(n._id)}
-                      className="p-2 bg-red-500 text-white rounded hover:bg-red-800"
-                    >
-                      <FaTrashAlt />
-                    </button>
+                    {handleDeleteNews && (
+                      <button
+                        onClick={() => handleDeleteNews(n._id)}
+                        className="p-2 bg-red-500 text-white rounded hover:bg-red-800"
+                      >
+                        <FaTrashAlt />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

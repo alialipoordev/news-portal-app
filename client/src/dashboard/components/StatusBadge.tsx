@@ -20,7 +20,7 @@ const StatusBadge: FC<StatusBadgeProps> = ({ status, onClick, role }) => {
       inactive: "hover:bg-red-300",
     };
 
-    return role === "admin"
+    return role === "admin" && onClick
       ? `${baseClasses[status]} ${hoverClasses[status]}`
       : baseClasses[status];
   };
@@ -29,7 +29,7 @@ const StatusBadge: FC<StatusBadgeProps> = ({ status, onClick, role }) => {
     <span
       onClick={onClick}
       className={`px-3 py-1 rounded-full text-xs font-semibold ${
-        role === "admin" ? "cursor-pointer" : ""
+        role === "admin" && onClick ? "cursor-pointer" : ""
       } ${getStatusClasses()}`}
     >
       {status}

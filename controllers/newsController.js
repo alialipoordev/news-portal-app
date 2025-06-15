@@ -1,4 +1,5 @@
 const newsModel = require("../models/newsModel");
+const authModel = require("../models/authModel");
 const imageGalleryModel = require("../models/imageGalleryModel");
 
 const cloudinary = require("../utils/cloudinary");
@@ -35,6 +36,41 @@ class NewsController {
       res.json({ news });
     } catch (error) {
       console.error("get_news_edit Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  get_news_statistics = async (req, res) => {
+    try {
+      const { role } = req.userInfo;
+
+      const totalNews = await newsModel.countDocuments();
+      const pendingNews = await newsModel.countDocuments({ status: "pending" });
+      const activeNews = await newsModel.countDocuments({ status: "active" });
+      const inactiveNews = await newsModel.countDocuments({
+        status: "inactive",
+      });
+
+      let totalWriters;
+
+      if (role === "admin") {
+        totalWriters = await authModel.countDocuments({ role: "writer" });
+      }
+
+      const data = {
+        totalNews,
+        pendingNews,
+        activeNews,
+        inactiveNews,
+      };
+
+      if (role === "admin") {
+        data.totalWriters = totalWriters;
+      }
+
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error("get_news_statistics Error:", error);
       return res.status(500).json({ message: "Internal server error" });
     }
   };
