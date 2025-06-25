@@ -76,7 +76,7 @@ const HeaderCategory = () => {
             </button>
 
             <div
-              className={`absolute lg:block top-[50px] z-20 w-full lg:w-[300px] lg:right-10 right-0 transition-all shadow-lg text-slate-700 ${
+              className={`absolute lg:block top-[50px] z-31 w-full lg:w-[300px] lg:right-10 right-0 transition-all shadow-lg text-slate-700 ${
                 searchVisible ? "visible" : "invisible"
               }`}
             >
