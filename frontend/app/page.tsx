@@ -1,5 +1,10 @@
 import LatestNews from "@/components/news/LatestNews";
+import NewsCard from "@/components/news/NewsCard";
 import NewsCardPreview from "@/components/news/NewsCardPreview";
+import NewsDetails from "@/components/news/NewsDetails";
+import NewsDetailsCol from "@/components/news/NewsDetailsCol";
+import NewsDetailsRow from "@/components/news/NewsDetailsRow";
+import PopularNews from "@/components/news/PopularNews";
 import Title from "@/components/news/Title";
 
 export default function Home() {
@@ -25,9 +30,62 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <PopularNews />
+          {/* first Section  */}
+          <div className="w-full">
+            <div className="flex flex-wrap">
+              <div className="w-full lg:w-8/12">
+                <NewsDetailsRow category="Sports" />
+                <NewsDetails category="Health" />
+              </div>
+
+              <div className="w-full lg:w-4/12">
+                <NewsDetailsCol category="Education" />
+              </div>
+            </div>
+          </div>
+
+          {/* 2nd Section  */}
+          <div className="w-full">
+            <div className="flex flex-wrap">
+              <div className="w-full lg:w-4/12">
+                <div className="pl-3">
+                  <NewsDetailsCol category="Politics" />
+                </div>
+              </div>
+
+              <div className="w-full lg:w-8/12">
+                <div className="pl-3">
+                  <NewsDetailsRow category="Travel" />
+                  <NewsDetails category="International" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3nd Section  */}
+          <div className="w-full">
+            <div className="flex flex-wrap">
+              <div className="w-full lg:w-8/12">
+                <NewsDetailsRow category="Technology" />
+              </div>
+
+              <div className="w-full lg:w-4/12">
+                <div className="pl-3">
+                  <Title title="Recent News" />
+                  <div className="grid grid-cols-1 gap-y-[8px] mt-2">
+                    {[1, 2, 3, 4].map((item, i) => (
+                      <div key={i}>
+                        <NewsCard item={item} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <h1>Main Page</h1>
     </main>
   );
 }

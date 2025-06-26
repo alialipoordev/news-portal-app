@@ -25,7 +25,7 @@ const HeaderCategory = () => {
   const renderLinks = (isMobile: boolean = false) => (
     <>
       <Link
-        className={`px-${isMobile ? "4" : "6"} font-medium py-[${
+        className={`${isMobile ? "px-4" : "px-6"} font-medium py-[${
           isMobile ? "5px" : "13px"
         }] ${isActive("/")}`}
         href="/"
@@ -35,7 +35,7 @@ const HeaderCategory = () => {
       {categories.map((name, index) => (
         <Link
           key={index}
-          className={`px-${isMobile ? "4" : "6"} font-medium py-[${
+          className={`${isMobile ? "px-4" : "px-6"} font-medium py-[${
             isMobile ? "5px" : "13px"
           }] ${isActive(`/${name.toLowerCase()}`)}`}
           href="/"
