@@ -66,7 +66,7 @@ export default function Home() {
           {/* 3nd Section  */}
           <div className="w-full">
             <div className="flex flex-wrap">
-              <div className="w-full lg:w-8/12">
+              <div className="w-full lg:w-8/12 mb-3">
                 <NewsDetailsRow category="Technology" />
               </div>
 

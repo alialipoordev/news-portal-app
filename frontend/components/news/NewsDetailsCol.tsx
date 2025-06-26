@@ -10,7 +10,7 @@ function NewsDetailsCol({ category }: { category: string }) {
       <div className="grid grid-cols-1 gap-y-6">
         <NewsDetailsCard showDescription={true} height={300} />
       </div>
-      <div className="grid grid-cols-1 gap-y-[8px]">
+      <div className="grid grid-cols-1 gap-y-[8px] mb-3">
         {[1, 2, 3, 4].map((item, i) => (
           <div key={i}>
             <NewsCard item={item} />
