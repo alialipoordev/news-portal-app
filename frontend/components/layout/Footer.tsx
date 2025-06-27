@@ -2,7 +2,7 @@ import Image from "next/image";
 import React from "react";
 import logo from "../../assets/logo.png";
 import FooterGallery from "./FooterGallery";
-import FooterCategories from "./FooterCategories";
+import CategoryList from "../news/CategoryList";
 import FooterRecentNews from "./FooterRecentNews";
 import { FaFacebookF, FaTwitter, FaYoutube } from "react-icons/fa";
 
@@ -30,7 +30,7 @@ function Footer() {
             <FooterGallery />
 
             <div>
-              <FooterCategories />
+              <CategoryList titleStyle="text-white font-semibold" />
             </div>
 
             <FooterRecentNews />
