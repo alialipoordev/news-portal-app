@@ -93,6 +93,21 @@ class clientNewsController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+  getHeadlines = async (req, res) => {
+    try {
+      const headlines = await newsModel
+        .find({ status: "active" })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select("title slug");
+
+      return res.status(200).json({ headlines });
+    } catch (error) {
+      console.error("Error fetching headlines:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = new clientNewsController();

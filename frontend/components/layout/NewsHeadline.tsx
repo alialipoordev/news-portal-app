@@ -1,14 +1,14 @@
 import Marquee from "react-fast-marquee";
 import Link from "next/link";
 import LoadingSpinner from "react-spinners-components";
+import BASE_URL from "@/config/config";
 
-const headlines = [
-  { id: 1, title: "Breaking: React 19 Released!", link: "/news/1" },
-  { id: 2, title: "Global Climate Conference Starts Today", link: "/news/2" },
-  { id: 3, title: "Local Election Results Announced", link: "/news/3" },
-];
+const NewsHeadline = async () => {
+  const res = await fetch(`${BASE_URL}/api/public/headlines`, {
+    next: { revalidate: 30 },
+  });
+  const { headlines } = await res.json();
 
-const NewsHeadline = () => {
   return (
     <div className="bg-white shadow flex flex-wrap">
       <div className="flex md:w-[170px] w-full bg-[#dddddd] relative after:absolute after:bg-[#dddddd] after:w-[20px] after:left-[160px] after:skew-x-[20deg] after:top-0 after:bottom-0 after:z-30">
@@ -32,10 +32,10 @@ const NewsHeadline = () => {
             speed={50}
             className="text-sm tracking-wide overflow-hidden"
           >
-            {headlines.map((item) => (
+            {headlines?.map((item) => (
               <Link
-                key={item.id}
-                href={item.link}
+                key={item._id}
+                href={`/news/${item.slug}`}
                 className="py-3 font-semibold hover:text-[#c80000] pr-12 text-sm"
               >
                 {item.title}
