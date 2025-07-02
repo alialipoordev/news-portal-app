@@ -45,6 +45,30 @@ class clientNewsController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+  getPopularNews = async (req, res) => {
+    try {
+      const popularNews = await newsModel
+        .find({ status: "active" })
+        .sort({ count: -1 })
+        .limit(4)
+        .select("title slug image category date name description")
+        .lean();
+
+      const transformedNews = popularNews.map((item) => {
+        const { name, ...rest } = item;
+        return {
+          ...rest,
+          writerName: name,
+        };
+      });
+
+      return res.status(200).json({ popularNews: transformedNews });
+    } catch (error) {
+      console.error("Error fetching popular news:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = new clientNewsController();
