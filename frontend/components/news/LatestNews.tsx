@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import NewsCardPreview from "./NewsCardPreview";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import BASE_URL from "@/config/config";
 
 type ButtonGroupProps = {
   next?: () => void;
@@ -40,6 +41,22 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({ next, previous }) => {
 };
 
 function LatestNews() {
+  const [news, setNews] = useState([]);
+
+  const getLatestNews = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/public/latest/news`);
+      const data = await res.json();
+      setNews(data.latestNews);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getLatestNews();
+  }, []);
+
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
@@ -70,7 +87,7 @@ function LatestNews() {
         renderButtonGroupOutside={true}
         customButtonGroup={<ButtonGroup />}
       >
-        {[1, 2, 3, 4].map((item, i) => (
+        {news.map((item, i) => (
           <div key={i}>
             <NewsCardPreview item={item} type="latest" />
           </div>
