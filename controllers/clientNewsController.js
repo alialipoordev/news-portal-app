@@ -108,6 +108,32 @@ class clientNewsController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+  getNewsCategories = async (req, res) => {
+    try {
+      const categories = await newsModel.aggregate([
+        { $match: { status: "active" } },
+        {
+          $group: {
+            _id: "$category",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            category: "$_id",
+            count: 1,
+          },
+        },
+      ]);
+
+      return res.status(200).json({ categories });
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = new clientNewsController();

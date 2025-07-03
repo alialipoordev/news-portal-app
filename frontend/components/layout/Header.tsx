@@ -7,8 +7,14 @@ import logo from "../../assets/logo.png";
 import adver_image from "../../assets/add.png";
 import bg_header from "../../assets/header-bg.jpg";
 import HeaderCategory from "./HeaderCategory";
+import BASE_URL from "@/config/config";
 
-function Header() {
+async function Header() {
+  const res = await fetch(`${BASE_URL}/api/public/categories/all`, {
+    next: { revalidate: 60 }, // ISR: revalidate every 60s
+  });
+  const { categories } = await res.json();
+
   return (
     <header className="bg-[#333333] text-[#cccccc]">
       <div className="px-5 lg:px-8 flex justify-between items-center py-2 border-b border-[#444444]">
@@ -65,7 +71,7 @@ function Header() {
         </div>
       </div>
 
-      <HeaderCategory />
+      <HeaderCategory categories={categories} />
     </header>
   );
 }

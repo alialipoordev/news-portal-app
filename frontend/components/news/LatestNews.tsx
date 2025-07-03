@@ -87,7 +87,7 @@ function LatestNews() {
         renderButtonGroupOutside={true}
         customButtonGroup={<ButtonGroup />}
       >
-        {news.map((item, i) => (
+        {news?.map((item, i) => (
           <div key={i}>
             <NewsCardPreview item={item} type="latest" />
           </div>

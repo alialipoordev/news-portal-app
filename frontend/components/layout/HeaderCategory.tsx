@@ -6,16 +6,7 @@ import { IoMdCloseCircle, IoMdList } from "react-icons/io";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
-const categories = [
-  "Sports",
-  "Travel",
-  "Education",
-  "National",
-  "Politic",
-  "Technology",
-];
-
-const HeaderCategory = () => {
+const HeaderCategory = ({ categories }) => {
   const path = usePathname();
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -32,15 +23,15 @@ const HeaderCategory = () => {
       >
         Home
       </Link>
-      {categories.map((name, index) => (
+      {categories?.map((c, index) => (
         <Link
           key={index}
           className={`${isMobile ? "px-4" : "px-6"} font-medium py-[${
             isMobile ? "5px" : "13px"
-          }] ${isActive(`/${name.toLowerCase()}`)}`}
-          href="/"
+          }] ${isActive(`/${c.category.toLowerCase()}`)}`}
+          href={`/news/category/${c.category.toLowerCase()}`}
         >
-          {name}
+          {c.category}
         </Link>
       ))}
     </>
