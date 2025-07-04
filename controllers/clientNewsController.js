@@ -134,6 +134,48 @@ class clientNewsController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+  getNewsDetails = async (req, res) => {
+    const { slug } = req.params;
+
+    try {
+      const newsDoc = await newsModel
+        .findOneAndUpdate({ slug }, { $inc: { count: 1 } }, { new: true })
+        .lean();
+
+      if (!newsDoc) {
+        return res.status(404).json({ message: "News not found" });
+      }
+
+      // rename 'name' to 'writerName' in main news
+      const { name, ...rest } = newsDoc;
+      const news = { ...rest, writerName: name };
+
+      const relatedNewsDocs = await newsModel
+        .find({
+          slug: { $ne: slug },
+          category: news.category,
+          status: "active",
+        })
+        .limit(4)
+        .sort({ createdAt: -1 })
+        .lean();
+
+      // map name → writerName in related news
+      const relatedNews = relatedNewsDocs.map(({ name, ...other }) => ({
+        ...other,
+        writerName: name,
+      }));
+
+      return res.status(200).json({
+        news,
+        relatedNews,
+      });
+    } catch (error) {
+      console.error("Error fetching news details:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = new clientNewsController();
