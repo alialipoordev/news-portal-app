@@ -1,7 +1,13 @@
+import BASE_URL from "@/config/config";
 import Link from "next/link";
 import React from "react";
 
-function CategoryList({ titleStyle }: {titleStyle: string}) {
+async function CategoryList({ titleStyle }: { titleStyle: string }) {
+  const res = await fetch(`${BASE_URL}/api/public/categories/all`, {
+    next: { revalidate: 60 }, // ISR: revalidate every 60s
+  });
+  const { categories } = await res.json();
+
   return (
     <div className="w-full flex flex-col gap-y-[14px]">
       <div
@@ -12,10 +18,13 @@ function CategoryList({ titleStyle }: {titleStyle: string}) {
       <div
         className={`flex flex-col justify-start items-start text-sm gap-y-3 pt-1 ${titleStyle}`}
       >
-        {[1, 2, 3, 4, 5, 6].map((item, i) => (
+        {categories?.map((item, i) => (
           <li className="list-none" key={i}>
-            <Link href={`/`} className="hover:text-blue-600 hover:underline">
-              Category List
+            <Link
+              href={`/news/category/${item.category.toLowerCase()}`}
+              className="hover:text-blue-600 hover:underline"
+            >
+              {item.category} ({item.count})
             </Link>
           </li>
         ))}
