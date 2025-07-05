@@ -1,8 +1,17 @@
+import BASE_URL from "@/config/config";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-function FooterRecentNews() {
+async function FooterRecentNews() {
+  const res = await fetch(`${BASE_URL}/api/public/recent/news`, {
+    next: {
+      revalidate: 1,
+    },
+  });
+
+  const { news } = await res.json();
+
   return (
     <div className="w-full flex flex-col gap-y-[14px]">
       <div
@@ -11,33 +20,31 @@ function FooterRecentNews() {
         Recent News
       </div>
       <div className="grid grid-cols-1 gap-y-2 pt-1">
-        {[1, 2, 3].map((r, i) => {
+        {news?.map((r, i) => {
           if (i < 4) {
             return (
-              <Link key={i} href={`/`} className="flex w-full">
+              <Link key={i} href={`/news/${r.slug}`} className="flex w-full">
                 <div className="group relative overflow-hidden w-[80px] h-[65px]">
                   <div className="w-[80px] h-[65px] block group-hover:scale-[1.1] transition-all duration-[1s] relative">
                     <Image
                       fill
-                      src={
-                        "https://res.cloudinary.com/denxmcn0r/image/upload/v1749464325/news_images/e5mcnogby44mljxwdlty.webp"
-                      }
+                      src={r?.image}
                       priority
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       alt="image"
                     />
-                    <div className="w-full h-full block absolute left-0 top-0 invisible group-hover:visible bg-white cursor-pointer opacity-5 transition-all duration-300" ></div>
+                    <div className="w-full h-full block absolute left-0 top-0 invisible group-hover:visible bg-white cursor-pointer opacity-5 transition-all duration-300"></div>
                   </div>
                 </div>
 
                 <div className="w-[calc(100%-90px)] pl-2">
                   <div className="flex flex-col gap-y-1">
                     <h2 className="text-sm font-semibold text-white hover:text-blue-600">
-                      What puzzles reveal about
+                      {r?.title}
                     </h2>
                     <div className="flex gap-x-2 text-xs font-normal text-white">
-                      <span>20-12-2025</span>
-                      <span>By Ali Alipoor</span>
+                      <span>{r?.date}</span>
+                      <span>By {r?.writerName}</span>
                     </div>
                   </div>
                 </div>

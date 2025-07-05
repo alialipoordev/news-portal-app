@@ -116,14 +116,14 @@ class clientNewsController {
         {
           $group: {
             _id: "$category",
-            // count: { $sum: 1 },
+            count: { $sum: 1 },
           },
         },
         {
           $project: {
             _id: 0,
             category: "$_id",
-            // count: 1,
+            count: 1,
           },
         },
       ]);
@@ -200,6 +200,28 @@ class clientNewsController {
       return res.status(200).json({ news });
     } catch (error) {
       console.error("Error fetching category news:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
+
+  getRecentNews = async (req, res) => {
+    try {
+      const news = await newsModel
+        .find({ status: "active" })
+        .sort({ createdAt: -1 })
+        .skip(6)
+        .limit(5)
+        .select("title slug image category date name")
+        .lean();
+
+      const transformed = news.map(({ name, ...rest }) => ({
+        ...rest,
+        writerName: name,
+      }));
+
+      return res.status(200).json({ news: transformed });
+    } catch (error) {
+      console.error("Error fetching recent news:", error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };

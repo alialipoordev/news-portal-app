@@ -1,10 +1,10 @@
 import LatestNews from "@/components/news/LatestNews";
-import NewsCard from "@/components/news/NewsCard";
 import NewsCardPreview from "@/components/news/NewsCardPreview";
 import NewsDetails from "@/components/news/NewsDetails";
 import NewsDetailsCol from "@/components/news/NewsDetailsCol";
 import NewsDetailsRow from "@/components/news/NewsDetailsRow";
 import PopularNews from "@/components/news/PopularNews";
+import RecentNews from "@/components/news/RecentNews";
 import Title from "@/components/news/Title";
 import BASE_URL from "@/config/config";
 
@@ -15,7 +15,7 @@ export default async function Home() {
 
   const data = await res.json();
   const allNews = data.news;
-  
+
   return (
     <main>
       <div className="bg-slate-100">
@@ -92,14 +92,7 @@ export default async function Home() {
 
               <div className="w-full lg:w-4/12">
                 <div className="pl-3">
-                  <Title title="Recent News" />
-                  <div className="grid grid-cols-1 gap-y-[8px] mt-2">
-                    {allNews["Health"].map((item, i) => (
-                      <div key={i}>
-                        <NewsCard item={item} />
-                      </div>
-                    ))}
-                  </div>
+                  <RecentNews />
                 </div>
               </div>
             </div>
