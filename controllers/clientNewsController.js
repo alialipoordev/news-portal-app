@@ -116,14 +116,14 @@ class clientNewsController {
         {
           $group: {
             _id: "$category",
-            count: { $sum: 1 },
+            // count: { $sum: 1 },
           },
         },
         {
           $project: {
             _id: 0,
             category: "$_id",
-            count: 1,
+            // count: 1,
           },
         },
       ]);
@@ -173,6 +173,33 @@ class clientNewsController {
       });
     } catch (error) {
       console.error("Error fetching news details:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
+
+  getNewsByCategory = async (req, res) => {
+    const { category } = req.params;
+    const formattedCategory =
+      category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+
+    try {
+      const newsDocs = await newsModel
+        .find({
+          category: formattedCategory,
+          status: "active",
+        })
+        .sort({ createdAt: -1 })
+        .lean();
+
+      // Optional: Rename `name` → `writerName`
+      const news = newsDocs.map(({ name, ...rest }) => ({
+        ...rest,
+        writerName: name,
+      }));
+
+      return res.status(200).json({ news });
+    } catch (error) {
+      console.error("Error fetching category news:", error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };

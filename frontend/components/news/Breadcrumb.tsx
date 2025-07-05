@@ -3,7 +3,7 @@ import React from "react";
 
 interface BreadcrumbProps {
   one: string;
-  two: string;
+  two?: string;
 }
 
 function Breadcrumb({ one, two }: BreadcrumbProps) {
