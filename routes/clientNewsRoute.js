@@ -10,6 +10,8 @@ router.get("/api/public/categories/all", clientNewsController.getNewsCategories)
 router.get("/api/public/news/:slug", clientNewsController.getNewsDetails);
 // Get all active news by category
 router.get("/api/public/news/category/:category", clientNewsController.getNewsByCategory);
+router.get("/api/public/gallery", clientNewsController.getGalleryImages);
+
 
 
 

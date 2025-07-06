@@ -225,6 +225,28 @@ class clientNewsController {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
+
+  getGalleryImages = async (req, res) => {
+    try {
+      const images = await newsModel.aggregate([
+        {
+          $match: { status: "active" }
+        },
+        {
+          $sample: { size: 9 } // Randomly select 9 documents
+        },
+        {
+          $project: { image: 1, _id: 0 } // Only return image field
+        }
+      ]);
+  
+      return res.status(200).json({ images });
+    } catch (error) {
+      console.error("Error fetching gallery images:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
+  
 }
 
 module.exports = new clientNewsController();
