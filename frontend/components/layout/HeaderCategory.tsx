@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { IoMdCloseCircle, IoMdList } from "react-icons/io";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
+import HeaderSearchBox from "./HeaderSearchBox";
 
 const HeaderCategory = ({ categories }) => {
   const path = usePathname();
@@ -71,24 +72,7 @@ const HeaderCategory = ({ categories }) => {
                 searchVisible ? "visible" : "invisible"
               }`}
             >
-              <div className="p-3 bg-white">
-                <form className="flex">
-                  <div className="w-[calc(100%-45px)] h-[40px]">
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      className="h-full w-full p-2 border border-slate-300 outline-none bg-slate-100"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-[45px] h-[40px] flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white text-xl cursor-pointer outline-none"
-                    aria-label="Submit search"
-                  >
-                    <FaSearch />
-                  </button>
-                </form>
-              </div>
+              <HeaderSearchBox />
             </div>
           </div>
         </div>

@@ -230,23 +230,49 @@ class clientNewsController {
     try {
       const images = await newsModel.aggregate([
         {
-          $match: { status: "active" }
+          $match: { status: "active" },
         },
         {
-          $sample: { size: 9 } // Randomly select 9 documents
+          $sample: { size: 9 }, // Randomly select 9 documents
         },
         {
-          $project: { image: 1, _id: 0 } // Only return image field
-        }
+          $project: { image: 1, _id: 0 }, // Only return image field
+        },
       ]);
-  
+
       return res.status(200).json({ images });
     } catch (error) {
       console.error("Error fetching gallery images:", error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
-  
+
+  searchNews = async (req, res) => {
+    const { value } = req.query;
+
+    try {
+      if (!value || value.trim() === "") {
+        return res.status(400).json({ message: "Search value is required" });
+      }
+
+      const news = await newsModel
+        .find({
+          status: "active",
+          title: { $regex: value, $options: "i" },
+        })
+        .lean();
+
+      const transformed = news.map(({ name, ...rest }) => ({
+        ...rest,
+        writerName: name,
+      }));
+
+      return res.status(200).json({ news: transformed });
+    } catch (error) {
+      console.error("Error searching news:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
 }
 
 module.exports = new clientNewsController();
