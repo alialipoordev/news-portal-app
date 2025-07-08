@@ -6,7 +6,8 @@ import CategoryList from "@/components/news/CategoryList";
 import RecentNews from "@/components/news/RecentNews";
 import RelatedNews from "@/components/news/RelatedNews";
 import SearchBox from "@/components/news/SearchBox";
-import ReactHtmlParser from "react-html-parser";
+// import ReactHtmlParser from "react-html-parser";
+import parse from "html-react-parser";
 
 type ParamsPromise = Promise<{ slug: string }>;
 
@@ -49,7 +50,7 @@ async function DetailsPage({ params }: DetailsPageProps) {
                       <span className="font-bold">{news?.date}</span>
                       <span className="font-bold">By {news?.writerName}</span>
                     </div>
-                    <div>{ReactHtmlParser(news?.description)}</div>
+                    <div>{parse(news?.description)}</div>
                   </div>
                 </div>
               </div>
