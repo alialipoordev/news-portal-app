@@ -3,6 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+interface NewsItem {
+  slug: string;
+  image: string;
+  title: string;
+  date: string;
+  writerName: string;
+}
+
 async function FooterRecentNews() {
   const res = await fetch(`${BASE_URL}/api/public/recent/news`, {
     next: {
@@ -10,7 +18,7 @@ async function FooterRecentNews() {
     },
   });
 
-  const { news } = await res.json();
+  const { news }: { news: NewsItem[] } = await res.json();
 
   return (
     <div className="w-full flex flex-col gap-y-[14px]">

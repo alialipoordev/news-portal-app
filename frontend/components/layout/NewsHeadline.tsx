@@ -3,11 +3,17 @@ import Link from "next/link";
 import LoadingSpinner from "react-spinners-components";
 import BASE_URL from "@/config/config";
 
+interface HeadlinesItem {
+  _id: string;
+  slug: string;
+  title: string;
+}
+
 const NewsHeadline = async () => {
   const res = await fetch(`${BASE_URL}/api/public/headlines`, {
     next: { revalidate: 30 },
   });
-  const { headlines } = await res.json();
+  const { headlines }: { headlines: HeadlinesItem[] } = await res.json();
 
   return (
     <div className="bg-white shadow flex flex-wrap">

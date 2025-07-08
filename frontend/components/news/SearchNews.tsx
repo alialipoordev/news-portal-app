@@ -40,7 +40,11 @@ function SearchNews() {
       {news.length > 0 ? (
         news.map((item, i) => (
           <div key={i}>
-            <NewsDetailsCard showDescription={true} news={item} height={200} />
+            <NewsDetailsCard
+              showDescription={true}
+              news={item}
+              // height={200}
+            />
           </div>
         ))
       ) : (

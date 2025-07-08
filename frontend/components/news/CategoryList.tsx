@@ -2,11 +2,20 @@ import BASE_URL from "@/config/config";
 import Link from "next/link";
 import React from "react";
 
-async function CategoryList({ titleStyle }: { titleStyle: string }) {
+interface CategoryItem {
+  category: string;
+  count: number;
+}
+
+interface CategoryListProps {
+  titleStyle: string;
+}
+
+async function CategoryList({ titleStyle }: CategoryListProps) {
   const res = await fetch(`${BASE_URL}/api/public/categories/all`, {
     next: { revalidate: 60 }, // ISR: revalidate every 60s
   });
-  const { categories } = await res.json();
+  const { categories }: { categories: CategoryItem[] } = await res.json();
 
   return (
     <div className="w-full flex flex-col gap-y-[14px]">

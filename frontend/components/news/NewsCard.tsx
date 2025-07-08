@@ -2,7 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-function NewsCard({ item }) {
+interface NewsCardProps {
+  item: {
+    image: string;
+    category: string;
+    slug: string;
+    title: string;
+    date: string;
+    writerName: string;
+  };
+}
+
+function NewsCard({ item }: NewsCardProps) {
   return (
     <div className="bg-[#e5effe] shadow-md rounded-md flex p-4 hover:shadow-md transition-shadow duration-300">
       <div className="relative flex-shrink-0 overflow-hidden rounded-md group">

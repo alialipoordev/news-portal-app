@@ -8,7 +8,23 @@ import React from "react";
 import BASE_URL from "@/config/config";
 import { formatText } from "@/utils/formatText";
 
-async function page({ params }) {
+type ParamsPromise = Promise<{ category: string }>;
+
+interface PageProps {
+  params: ParamsPromise;
+}
+
+interface NewsItem {
+  image: string;
+  category: string;
+  slug: string;
+  title: string;
+  date: string;
+  writerName: string;
+  description: string;
+}
+
+async function page({ params }: PageProps) {
   const { category } = await params;
   const res = await fetch(
     `${BASE_URL}/api/public/news/category/${formatText(category)}`,
@@ -18,7 +34,7 @@ async function page({ params }) {
       },
     }
   );
-  const { news } = await res.json();
+  const { news }: { news: NewsItem[] } = await res.json();
 
   return (
     <div>
@@ -35,7 +51,11 @@ async function page({ params }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {news.map((item, i) => (
                     <div key={i}>
-                      <NewsDetailsCard news={item} showDescription={true} height={200} />
+                      <NewsDetailsCard
+                        news={item}
+                        showDescription={true}
+                        // height={200}
+                      />
                     </div>
                   ))}
                 </div>

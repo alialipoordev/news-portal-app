@@ -5,6 +5,7 @@ import { convert } from "html-to-text";
 
 interface NewsDetailsCardProps {
   news: {
+    _id?: string;
     image: string;
     category: string;
     slug: string;

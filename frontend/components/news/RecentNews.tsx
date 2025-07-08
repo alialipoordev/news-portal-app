@@ -3,6 +3,15 @@ import Title from "./Title";
 import NewsCard from "./NewsCard";
 import BASE_URL from "@/config/config";
 
+interface NewsItem {
+  image: string;
+  category: string;
+  slug: string;
+  title: string;
+  date: string;
+  writerName: string;
+}
+
 async function RecentNews() {
   const res = await fetch(`${BASE_URL}/api/public/recent/news`, {
     next: {
@@ -10,7 +19,7 @@ async function RecentNews() {
     },
   });
 
-  const { news } = await res.json();
+  const { news }: { news: NewsItem[] } = await res.json();
 
   return (
     <div className="w-full flex flex-col gap-y-[6px] bg-white pt-4">

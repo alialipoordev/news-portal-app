@@ -8,7 +8,7 @@ function HeaderSearchBox() {
   const [state, setState] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.push(`/search/news?value=${state}`);
     setState("");

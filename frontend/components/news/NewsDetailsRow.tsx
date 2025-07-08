@@ -3,7 +3,21 @@ import Title from "./Title";
 import NewsDetailsCard from "./NewsDetailsCard";
 import NewsCard from "./NewsCard";
 
-function NewsDetailsRow({ category, news }: { category: string }) {
+interface NewsDetailsRowProps {
+  category: string;
+  news: {
+    _id: string;
+    image: string;
+    category: string;
+    slug: string;
+    title: string;
+    date: string;
+    writerName: string;
+    description: string;
+  }[];
+}
+
+function NewsDetailsRow({ category, news }: NewsDetailsRowProps) {
   if (!news || news.length === 0) return null;
 
   return (
@@ -11,7 +25,11 @@ function NewsDetailsRow({ category, news }: { category: string }) {
       <Title title={category} />
 
       <div className="grid lg:grid-cols-2 grid-cols-1 gap-6">
-        <NewsDetailsCard news={news[0]} showDescription={true} height={300} />
+        <NewsDetailsCard
+          news={news[0]}
+          showDescription={true}
+          // height={300}
+        />
 
         <div className="grid grid-cols-1 gap-2">
           {news.slice(1).map((item) => (

@@ -8,7 +8,13 @@ import RelatedNews from "@/components/news/RelatedNews";
 import SearchBox from "@/components/news/SearchBox";
 import ReactHtmlParser from "react-html-parser";
 
-async function DetailsPage({ params }) {
+type ParamsPromise = Promise<{ slug: string }>;
+
+interface DetailsPageProps {
+  params: ParamsPromise;
+}
+
+async function DetailsPage({ params }: DetailsPageProps) {
   const { slug } = await params;
   const res = await fetch(`${BASE_URL}/api/public/news/${slug}`, {
     next: {

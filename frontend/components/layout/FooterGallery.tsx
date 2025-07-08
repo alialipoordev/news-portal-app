@@ -2,12 +2,16 @@ import BASE_URL from "@/config/config";
 import Image from "next/image";
 import React from "react";
 
+interface ImagesItem {
+  image: string;
+}
+
 async function FooterGallery() {
   const res = await fetch(`${BASE_URL}/api/public/gallery`, {
     next: { revalidate: 60 },
   });
 
-  const { images } = await res.json();
+  const { images }: { images: ImagesItem[] } = await res.json();
 
   return (
     <div className="w-full flex flex-col gap-y-[14px]">

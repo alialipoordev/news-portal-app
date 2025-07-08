@@ -8,6 +8,16 @@ import RecentNews from "@/components/news/RecentNews";
 import Title from "@/components/news/Title";
 import BASE_URL from "@/config/config";
 
+interface NewsItem {
+  _id: string;
+  image: string;
+  category: string;
+  slug: string;
+  title: string;
+  date: string;
+  writerName: string;
+}
+
 export default async function Home() {
   const res = await fetch(`${BASE_URL}/api/public/all/news`, {
     next: { revalidate: 5 },
@@ -29,7 +39,7 @@ export default async function Home() {
               <div className="flex w-full flex-col gap-y-[14px] pl-0 lg:pl-2">
                 <Title title="Technology" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
-                  {allNews["Technology"].map((item) => (
+                  {allNews["Technology"].map((item: NewsItem) => (
                     <div key={item._id}>
                       <NewsCardPreview item={item} />
                     </div>

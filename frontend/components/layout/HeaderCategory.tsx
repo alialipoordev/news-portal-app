@@ -7,7 +7,11 @@ import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 import HeaderSearchBox from "./HeaderSearchBox";
 
-const HeaderCategory = ({ categories }) => {
+interface HeaderCategoryProps {
+  categories: { count: number; category: string }[];
+}
+
+const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
   const path = usePathname();
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);

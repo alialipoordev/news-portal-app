@@ -3,13 +3,24 @@ import NewsDetailsCard from "./NewsDetailsCard";
 import Title from "./Title";
 import BASE_URL from "@/config/config";
 
+interface NewsItem {
+  _id: string;
+  image: string;
+  category: string;
+  slug: string;
+  title: string;
+  date: string;
+  writerName: string;
+  description: string;
+}
+
 async function PopularNews() {
   const res = await fetch(`${BASE_URL}/api/public/popular/news`, {
     next: {
       revalidate: 1,
     },
   });
-  const { popularNews } = await res.json();
+  const { popularNews }: { popularNews: NewsItem[] } = await res.json();
 
   return (
     <div className="w-full pb-8 mt-5">
@@ -18,7 +29,11 @@ async function PopularNews() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-3 sm:gap-3 lg:gap-x-3">
           {popularNews.map((item) => (
             <div key={item._id}>
-              <NewsDetailsCard news={item} height={230} />
+              <NewsDetailsCard
+                news={item}
+                showDescription={false}
+                // height={230}
+              />
             </div>
           ))}
         </div>

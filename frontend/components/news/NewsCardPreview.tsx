@@ -4,6 +4,7 @@ import React from "react";
 
 interface NewsCardPreviewProps {
   item: {
+    _id: string;
     image: string;
     category: string;
     slug: string;

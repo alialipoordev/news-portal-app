@@ -4,7 +4,7 @@ import PopularNews from "@/components/news/PopularNews";
 import RecentNews from "@/components/news/RecentNews";
 import SearchBox from "@/components/news/SearchBox";
 import SearchNews from "@/components/news/SearchNews";
-import React from "react";
+import React, { Suspense } from "react";
 
 function page() {
   return (
@@ -20,7 +20,10 @@ function page() {
           <div className="flex flex-wrap">
             <div className="w-full xl:w-8/12">
               <div className="w-full pr-0 xl:pr-4">
-                <SearchNews />
+                {/* <SearchNews /> */}
+                <Suspense>
+                  <SearchNews />
+                </Suspense>
               </div>
             </div>
 
