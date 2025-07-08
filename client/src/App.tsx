@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter basename="/client">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
 

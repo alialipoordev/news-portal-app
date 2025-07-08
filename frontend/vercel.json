@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/client/:path*",
+      "destination": "https://client-dashboard-six.vercel.app/:path*"
+    }
+  ]
+}
