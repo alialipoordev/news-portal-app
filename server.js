@@ -18,14 +18,10 @@ app.use(bodyParser.json());
 const corsOptions =
   process.env.NODE_ENV === "production"
     ? cors({
-        origin: [process.env.VERCEL_ORIGIN],
+        origin: [process.env.VERCEL_ORIGIN, process.env.VERCEL_ORIGIN_CLIENT],
       })
     : cors({
-        origin: [
-          "http://localhost:5173",
-          "http://localhost:3000",
-          process.env.VERCEL_ORIGIN,
-        ],
+        origin: ["http://localhost:5173", "http://localhost:3000"],
       });
 
 app.use(corsOptions);
