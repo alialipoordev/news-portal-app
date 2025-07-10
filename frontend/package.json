@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "framer-motion": "^12.23.3",
     "html-react-parser": "^5.2.5",
     "html-to-text": "^9.0.5",
     "moment": "^2.30.1",
