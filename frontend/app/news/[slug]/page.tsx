@@ -8,6 +8,7 @@ import RelatedNews from "@/components/news/RelatedNews";
 import SearchBox from "@/components/news/SearchBox";
 // import ReactHtmlParser from "react-html-parser";
 import parse from "html-react-parser";
+import Image from "next/image";
 
 type ParamsPromise = Promise<{ slug: string }>;
 
@@ -38,7 +39,9 @@ async function DetailsPage({ params }: DetailsPageProps) {
             <div className="w-full xl:w-8/12">
               <div className="w-full pr-0 xl:pr-4">
                 <div className="flex flex-col gap-y-5 bg-white">
-                  <img src={news?.image} alt="image" />
+                  <div className="w-full h-[100vh] relative">
+                    <Image src={news?.image} alt="image" fill />
+                  </div>
                   <div className="flex flex-col gap-y-4 px-6 pb-6">
                     <h3 className="text-red-700 uppercase font-medium text-xl">
                       {news?.category}

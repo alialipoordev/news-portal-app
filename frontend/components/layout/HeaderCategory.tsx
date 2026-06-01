@@ -9,6 +9,7 @@ import { IoMdCloseCircle, IoMdList } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 
 import HeaderSearchBox from "./HeaderSearchBox";
+import { LoginButton } from "../ui/LoginButton";
 
 interface HeaderCategoryProps {
   categories: { count: number; category: string }[];
@@ -21,14 +22,16 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
   const [searchVisible, setSearchVisible] = useState(false);
 
   const isActive = (route: string) =>
-    path === route ? "bg-[#00000026] text-blue-400" : "";
+    path === route
+      ? "text-accent rounded-md pb-1 shadow-[0_1.5px] shadow-accent/50"
+      : "";
 
   const renderLinks = (isMobile: boolean = false) => (
     <>
       <Link
         className={`${
           isMobile ? "px-4" : "px-6"
-        } font-medium hover:text-blue-300 py-[${
+        } font-medium hover:text-accent py-[${
           isMobile ? "5px" : "13px"
         }] ${isActive("/")}`}
         href="/"
@@ -40,7 +43,7 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
           key={index}
           className={`${
             isMobile ? "px-4" : "px-6"
-          } font-medium hover:text-blue-300 py-[${
+          } font-medium hover:text-accent py-[${
             isMobile ? "5px" : "13px"
           }] ${isActive(`/news/category/${c.category.toLowerCase()}`)}`}
           href={`/news/category/${c.category.toLowerCase()}`}
@@ -53,7 +56,7 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
 
   return (
     <div className="w-full">
-      <div className="bg-[#5271ff] text-white uppercase font-semibold relative">
+      <div className="bg-secondary text-surface uppercase font-semibold relative">
         <div className="flex justify-between items-center h-[50px] relative">
           <button
             onClick={() => setCategoryVisible(!categoryVisible)}
@@ -109,10 +112,10 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.4, ease: "circInOut" }}
-              className="absolute left-0 top-0 h-full w-[16rem] bg-[#5271ff] text-white shadow-lg z-50 p-4 overflow-y-auto"
+              className="absolute left-0 top-0 h-full w-[16rem] bg-secondary text-surface shadow-lg z-50 p-4 overflow-y-auto"
             >
               <button
-                className="text-white text-2xl absolute top-4 right-4 cursor-pointer"
+                className="text-surface text-2xl absolute top-4 right-4 cursor-pointer"
                 onClick={() => setCategoryVisible(false)}
                 aria-label="Close menu"
               >
@@ -121,12 +124,9 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
               <nav className="flex flex-col justify-between mt-10">
                 <div className="flex flex-col gap-2">{renderLinks(true)}</div>
 
-                <button
-                  onClick={() => router.push("/client/login")}
-                  className="mt-6 w-full py-2 bg-white text-[#5271ff] font-semibold rounded hover:bg-blue-600 hover:text-white cursor-pointer transition"
-                >
-                  Login
-                </button>
+                <LoginButton
+                  className="mt-6 w-full py-2 cursor-pointer hover:bg-primary"
+                />
               </nav>
             </motion.div>
           </motion.div>

@@ -1,6 +1,5 @@
 import React from "react";
 import moment from "moment";
-import { FaFacebookF, FaTwitter, FaYoutube } from "react-icons/fa";
 import Image from "next/image";
 
 import logo from "../../assets/logo.png";
@@ -8,6 +7,17 @@ import adver_image from "../../assets/add.png";
 import bg_header from "../../assets/header-bg.jpg";
 import HeaderCategory from "./HeaderCategory";
 import BASE_URL from "@/config/config";
+import { SocialLinks } from "../features/social/SocialLinks";
+import { Divider } from "../ui/Divider";
+import { LoginButton } from "../ui/LoginButton";
+
+const socialLinks = [
+  { platform: "x", href: "", label: "" },
+  { platform: "instagram", href: "", label: "" },
+  { platform: "youtube", href: "", label: "" },
+  { platform: "linkedin", href: "", label: "" },
+  { platform: "facebook", href: "", label: "" },
+] as const;
 
 async function Header() {
   const res = await fetch(`${BASE_URL}/api/public/categories/all`, {
@@ -16,30 +26,15 @@ async function Header() {
   const { categories } = await res.json();
 
   return (
-    <header className="bg-[#333333] text-[#cccccc]">
+    <header className="bg-primary text-white/70">
       <div className="px-5 lg:px-8 flex justify-between items-center py-2 border-b border-[#444444]">
         <span className="text-sm font-medium">{moment().format("LLLL")}</span>
-        <div className="flex space-x-2">
-          <a
-            href=""
-            className="w-8 h-8 flex justify-center items-center bg-[#2045ea] rounded-full hover:bg-slate-500 transition duration-200"
-          >
-            <FaFacebookF />
-          </a>
+        <div className="flex space-x-2 ">
+          <SocialLinks links={socialLinks} />
 
-          <a
-            href=""
-            className="w-8 h-8 flex justify-center items-center bg-[#5271ff] rounded-full hover:bg-slate-500 transition duration-200"
-          >
-            <FaTwitter />
-          </a>
+          <Divider orientation="vertical" className="bg-white/15" />
 
-          <a
-            href=""
-            className="w-8 h-8 flex justify-center items-center bg-[#ff5157] rounded-full hover:bg-slate-500 transition duration-200"
-          >
-            <FaYoutube />
-          </a>
+          <LoginButton />
         </div>
       </div>
 

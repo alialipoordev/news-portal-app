@@ -1,0 +1,44 @@
+/* app/theme.css */
+@theme {
+  /* Core Palette */
+  --color-primary: #0F172A;
+  --color-secondary: #1E293B;
+  --color-accent: #EF4444;
+  --color-accent-dark: #DC2626;
+
+  /* Background & Surface */
+  --color-surface: #FFFFFF;
+  --color-background: #F8FAFC;
+
+  /* Borders & Dividers */
+  --color-border: #E2E8F0;
+  
+  /* Neutrals & Muted Tones */
+  --color-muted: #94A3B8;
+  --color-muted-light: #CBD5E1;
+
+  /* Text Colors */
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+
+  /* Status Colors */
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-info: #3B82F6;
+
+  /* Aliases as requested */
+  --color-accent-dark-alias: var(--color-accent-dark); /* برای 'accent-dark' */
+  --color-muted-light-alias: var(--color-muted-light); /* برای 'muted-light' */
+
+  /* Text color aliases */
+  --color-text-primary-alias: var(--color-text-primary);
+  --color-text-secondary-alias: var(--color-text-secondary);
+  --color-text-muted-alias: var(--color-text-muted);
+
+  /* You can add more tokens here as needed, e.g., spacing, fonts */
+  /* --spacing-container: 1200px; */
+  /* --font-display: "Inter", sans-serif; */
+}
+
+
