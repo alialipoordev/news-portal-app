@@ -10,6 +10,7 @@ import BASE_URL from "@/config/config";
 import { SocialLinks } from "../features/social/SocialLinks";
 import { Divider } from "../ui/Divider";
 import { LoginButton } from "../ui/LoginButton";
+import { SocialLink } from "@/types/type";
 
 const socialLinks = [
   { platform: "x", href: "", label: "" },
@@ -17,7 +18,7 @@ const socialLinks = [
   { platform: "youtube", href: "", label: "" },
   { platform: "linkedin", href: "", label: "" },
   { platform: "facebook", href: "", label: "" },
-] as const;
+] as SocialLink[];
 
 async function Header() {
   const res = await fetch(`${BASE_URL}/api/public/categories/all`, {
