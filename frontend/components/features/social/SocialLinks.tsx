@@ -96,7 +96,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
         aria-label={link.label}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white/40 hover:text-white/85 transition-colors duration-150"
+        className="text-white/40 hover:text-accent transition-colors duration-150"
       >
         <PlatformIcon platform={link.platform} />
       </a>

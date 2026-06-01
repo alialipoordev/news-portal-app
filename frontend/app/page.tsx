@@ -28,7 +28,7 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="bg-slate-100">
+      <div className="bg-background">
         <div className="px-4 md:px-8 py-8">
           <div className="flex flex-wrap">
             <div className="w-full lg:w-6/12">

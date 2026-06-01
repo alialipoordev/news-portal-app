@@ -33,9 +33,12 @@ async function Header() {
         <div className="flex space-x-2 ">
           <SocialLinks links={socialLinks} />
 
-          <Divider orientation="vertical" className="bg-white/15" />
+          <Divider
+            orientation="vertical"
+            className="bg-white/15 hidden lg:inline-flex"
+          />
 
-          <LoginButton />
+          <LoginButton className="hidden lg:inline-flex hover:text-accent cursor-pointer" />
         </div>
       </div>
 
