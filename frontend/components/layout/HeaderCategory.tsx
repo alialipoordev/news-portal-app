@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,7 +17,6 @@ interface HeaderCategoryProps {
 
 const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
   const path = usePathname();
-  const router = useRouter();
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
 
@@ -124,9 +123,7 @@ const HeaderCategory = ({ categories }: HeaderCategoryProps) => {
               <nav className="flex flex-col justify-between mt-10">
                 <div className="flex flex-col gap-2">{renderLinks(true)}</div>
 
-                <LoginButton
-                  className="mt-6 w-full py-2 cursor-pointer hover:bg-primary"
-                />
+                <LoginButton className="mt-6 w-full py-2 cursor-pointer hover:bg-primary" />
               </nav>
             </motion.div>
           </motion.div>
