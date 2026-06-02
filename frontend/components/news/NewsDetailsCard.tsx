@@ -26,7 +26,7 @@ function NewsDetailsCard({ showDescription, news }: NewsDetailsCardProps) {
             fill
             src={news?.image || "/news.jpg"}
             alt="images"
-            priority
+            // priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>

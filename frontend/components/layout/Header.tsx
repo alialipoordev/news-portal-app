@@ -1,9 +1,7 @@
 import React from "react";
-import moment from "moment";
 import Image from "next/image";
 
 import logo from "../../assets/logo.png";
-import adver_image from "../../assets/add.png";
 import bg_header from "../../assets/header-bg.jpg";
 import HeaderCategory from "./HeaderCategory";
 import BASE_URL from "@/config/config";
@@ -11,6 +9,7 @@ import { SocialLinks } from "../features/social/SocialLinks";
 import { Divider } from "../ui/Divider";
 import { LoginButton } from "../ui/LoginButton";
 import { SocialLink } from "@/types/type";
+import { LiveBadge } from "./LiveBadge";
 
 const socialLinks = [
   { platform: "x", href: "", label: "" },
@@ -29,16 +28,17 @@ async function Header() {
   return (
     <header className="bg-primary text-white/70">
       <div className="px-5 lg:px-8 flex justify-between items-center py-2 border-b border-[#444444]">
-        <span className="text-sm font-medium">{moment().format("LLLL")}</span>
-        <div className="flex space-x-2 ">
-          <SocialLinks links={socialLinks} />
+        <LiveBadge />
+
+        <div className="flex space-x-2">
+          <SocialLinks links={socialLinks} className="hidden sm:inline-flex" />
 
           <Divider
             orientation="vertical"
             className="bg-white/15 hidden lg:inline-flex"
           />
 
-          <LoginButton className="hidden lg:inline-flex hover:text-accent cursor-pointer" />
+          <LoginButton className="hidden lg:inline-flex hover:text-accent cursor-pointer w-22 justify-center" />
         </div>
       </div>
 
@@ -52,20 +52,11 @@ async function Header() {
               className="w-[200px] h-full"
               alt="logo"
               src={logo}
-              priority
+              // priority
             />
             <h2 className="text-[#cccccc] text-md md:text-md font-semibold tracking-wide text-center md:text-left">
-              Media that rocks your world
+              Media That Rocks Your World
             </h2>
-          </div>
-
-          <div className="md:w-8/12 w-full hidden md:flex justify-end">
-            <Image
-              className="max-w-full h-auto"
-              alt="add"
-              src={adver_image}
-              priority
-            />
           </div>
         </div>
       </div>

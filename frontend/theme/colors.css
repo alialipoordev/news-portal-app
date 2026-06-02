@@ -1,31 +1,31 @@
-/* app/theme.css */
 @theme {
   /* Core Palette */
-  --color-primary: #0F172A;
-  --color-secondary: #1E293B;
-  --color-accent: #EF4444;
-  --color-accent-dark: #DC2626;
+  --color-primary: #0f172a;
+  --color-secondary: #1e293b;
+  --color-accent: #ef4444;
+  --color-accent-dark: #dc2626;
 
   /* Background & Surface */
-  --color-surface: #FFFFFF;
-  --color-background: #F8FAFC;
+  --color-surface: #ffffff;
+  --color-background: #f8fafc;
+  --color-card: #e5effe;
 
   /* Borders & Dividers */
-  --color-border: #E2E8F0;
-  
+  --color-border: #e2e8f0;
+
   /* Neutrals & Muted Tones */
-  --color-muted: #94A3B8;
-  --color-muted-light: #CBD5E1;
+  --color-muted: #94a3b8;
+  --color-muted-light: #cbd5e1;
 
   /* Text Colors */
-  --color-text-primary: #0F172A;
+  --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-muted: #94A3B8;
+  --color-text-muted: #94a3b8;
 
   /* Status Colors */
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-info: #3B82F6;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
 
   /* Aliases as requested */
   --color-accent-dark-alias: var(--color-accent-dark); /* برای 'accent-dark' */
@@ -40,5 +40,3 @@
   /* --spacing-container: 1200px; */
   /* --font-display: "Inter", sans-serif; */
 }
-
-

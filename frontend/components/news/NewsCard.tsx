@@ -15,14 +15,14 @@ interface NewsCardProps {
 
 function NewsCard({ item }: NewsCardProps) {
   return (
-    <div className="bg-[#e5effe] shadow-md rounded-md flex p-4 hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card shadow-md rounded-md flex p-4 hover:shadow-md transition-shadow duration-300">
       <div className="relative flex-shrink-0 overflow-hidden rounded-md group">
         <div className="group-hover:scale-110 transform transition-transform duration-700 w-[100px] md:w-[160px] h-[93px] lg:w-[100px] relative">
           <Image
             fill
             src={item?.image || "/news.jpg"}
             alt="images"
-            priority
+            // priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
